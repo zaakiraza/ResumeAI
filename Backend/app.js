@@ -16,7 +16,7 @@ const app = express();
 app.use(helmet());
 
 // uncomment it for security
-// app.use(mongoSanitize());
+app.use(mongoSanitize());
 
 app.use(
   rateLimit({
@@ -30,11 +30,7 @@ app.use(
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
 connectDB();
-
-// Start cron job
-// startCronJob();
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
