@@ -5,7 +5,7 @@ import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
 import connectDB from "./utils/DB.js";
-import { startCronJob } from "./utils/cronJob.js";
+// import { startCronJob } from "./utils/cronJob.js";
 import authRouter from "./routes/authRoute.js";
 import userRouter from "./routes/userRoute.js";
 
@@ -31,7 +31,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-// connectDB();
+connectDB();
 
 // Start cron job
 // startCronJob();
