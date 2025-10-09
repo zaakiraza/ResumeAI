@@ -8,10 +8,10 @@ const Navbar = () => {
     <div className="navbar">
       <div className="logo">
         {/* <img src="/logo.png" alt="" /> */}
-        <h1>ResumeAI</h1>
+        <h1 onClick={() => navigate("/")}>ResumeAI</h1>
       </div>
       <ul className="navItems">
-        <li>Home</li>
+        <li onClick={() => navigate("/")}>Home</li>
         <li>About</li>
         <li>Services</li>
         <li>Contact</li>
