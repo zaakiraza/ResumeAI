@@ -22,7 +22,7 @@ function ResetPassword() {
     }
     try {
       const api = await axios.post(
-        "http://localhost:5003/api/auth/changePassword",
+        "https://resume-backend-roan-nu.vercel.app/api/auth/changePassword",
         {
           oldPassword: oldPassword,
           newPassword: password,

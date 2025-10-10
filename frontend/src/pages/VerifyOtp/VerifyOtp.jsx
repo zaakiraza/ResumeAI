@@ -32,7 +32,7 @@ function VerifyOtp() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5003/api/auth/verifyOtp",
+        "https://resume-backend-roan-nu.vercel.app/api/auth/verifyOtp",
         { otp: otpString },
         {
           headers: {
@@ -54,7 +54,7 @@ function VerifyOtp() {
   // Handle OTP resend request
   const handleResendOtp = async () => {
     try {
-      const res = await axios.get("http://localhost:5003/api/auth/resendOtp", {
+      const res = await axios.get("https://resume-backend-roan-nu.vercel.app/api/auth/resendOtp", {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },

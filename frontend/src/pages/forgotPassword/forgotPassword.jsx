@@ -19,7 +19,7 @@ function ForgotPassword() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5003/api/auth/forgotPasswordOtp",
+        "https://resume-backend-roan-nu.vercel.app/api/auth/forgotPasswordOtp",
         {
           email: email,
         }
@@ -50,7 +50,7 @@ function ForgotPassword() {
         return;
       }
       const response = await axios.post(
-        "http://localhost:5003/api/auth/verifyforgotPasswordOtp",
+        "https://resume-backend-roan-nu.vercel.app/api/auth/verifyforgotPasswordOtp",
         { email, otp }
       );
       setMessage(response.data.message);
@@ -59,7 +59,7 @@ function ForgotPassword() {
       setOtpExpiresAt(null);
 
       const api = await axios.post(
-        "http://localhost:5003/api/auth/forgotPassword",
+        "https://resume-backend-roan-nu.vercel.app/api/auth/forgotPassword",
         {
           email,
         }

@@ -70,7 +70,7 @@ const Signup = () => {
     setErrors({});
 
     try {
-      const res = await axios.post("http://localhost:5003/api/auth/register", {
+      const res = await axios.post("https://resume-backend-roan-nu.vercel.app/api/auth/register", {
         email: formData.email,
         password: formData.password,
       });
