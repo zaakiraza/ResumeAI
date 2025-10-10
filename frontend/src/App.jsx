@@ -6,9 +6,10 @@ import Contact from "./pages/contact/Contact";
 import Faq from "./pages/faq/Faq";
 import VerifyOtp from "./pages/VerifyOtp/VerifyOtp";
 import Dashboard from "./pages/dashboard/Dashboard";
-import ForgotPassword from "./pages/forgotPassword/ForgotPassword";
-import ResetPassword from "./pages/resetPassword/ResetPassword";
-import SignIn from "./pages/login/Signin";
+import ForgotPassword from "./pages/forgotPassword/orgotPassword";
+import ResetPassword from "./pages/ResetPassword/esetPassword";
+// import SignIn from "./pages/login/Signin";
+import SignIn from "./pages/login/ignin";
 import Signup from "./pages/register/signup";
 import { Route, Routes } from "react-router-dom";
 
