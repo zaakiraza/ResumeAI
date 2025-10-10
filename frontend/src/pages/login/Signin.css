@@ -489,3 +489,25 @@
   margin-top: 0.25rem;
   margin-left: 0.25rem;
 }
+
+/* Message display */
+.message {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+.message.error {
+  background-color: rgba(255, 68, 68, 0.1);
+  color: #ff4444;
+  border: 1px solid rgba(255, 68, 68, 0.3);
+}
+
+.message.success {
+  background-color: rgba(255, 215, 0, 0.1);
+  color: #ffb800;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}

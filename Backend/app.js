@@ -2,22 +2,29 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
-import mongoSanitize from "express-mongo-sanitize";
+// import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
 import connectDB from "./utils/DB.js";
 // import { startCronJob } from "./utils/cronJob.js";
-import authRouter from "./routes/authRoute.js";
+import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoute.js";
 
 dotenv.config();
 const app = express();
 
-// Security middlewares
+// CORS must be applied first
+app.use(cors());
+
+// Body parsing middleware
+app.use(express.json());
+
+// Security middlewares (after body parsing)
 app.use(helmet());
 
-// uncomment it for security
-app.use(mongoSanitize());
+// MongoDB sanitization (after body parsing)
+// app.use(mongoSanitize());
 
+// Rate limiting
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -26,9 +33,6 @@ app.use(
     legacyHeaders: false,
   })
 );
-
-app.use(cors());
-app.use(express.json());
 
 connectDB();
 
@@ -43,6 +47,7 @@ app.get("/", (req, res) => {
 if (process.env.NODE_ENV !== "production") {
   const port = process.env.PORT || 5003;
   app.listen(port, () => {
-    console.log(`Click to Open Project: ${port}`);
+    // console.log(`Click to Open Project: ${port}`);
+    console.log("Server is running");
   });
 }

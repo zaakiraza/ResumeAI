@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Signin.css";
 
 const SignIn = () => {
@@ -7,6 +10,8 @@ const SignIn = () => {
     password: "",
     rememberMe: false,
   });
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -18,10 +23,34 @@ const SignIn = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Sign in attempt:", formData);
-    // Add your sign-in logic here
+
+    if (!formData.email || !formData.password) {
+      setMessage("All fields are required");
+      setTimeout(() => {
+        setMessage("");
+      }, 3000);
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5003/api/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (res.data.status) {
+        setMessage(res.data.message);
+        localStorage.setItem("token", res.data.data);
+        navigate("/dashboard"); // or wherever you want to redirect after login
+      }
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Login failed");
+      setTimeout(() => {
+        setMessage("");
+      }, 3000);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -37,7 +66,21 @@ const SignIn = () => {
           <p>Sign in to your ResumeAI account</p>
         </div>
 
-        <form className="signin-form" onSubmit={handleSubmit}>
+        <form
+          className="signin-form"
+          onSubmit={(e) => {
+            handleSubmit(e);
+          }}
+        >
+          {message && (
+            <div
+              className={`message ${
+                message.includes("success") ? "success" : "error"
+              }`}
+            >
+              {message}
+            </div>
+          )}
           <div className="form-group">
             {/* <label htmlFor="email">Email Address</label> */}
             <input
@@ -70,12 +113,32 @@ const SignIn = () => {
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
-                  <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                  <svg
+                    className="eye-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                    />
                   </svg>
                 ) : (
-                  <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <svg
+                    className="eye-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                 )}
@@ -94,12 +157,15 @@ const SignIn = () => {
               />
               <label htmlFor="rememberMe">Remember me</label>
             </div>
-            <a href="#" className="forgot-password">
+            <Link to="/forgotPassword" className="forgot-password">
               Forgot password?
-            </a>
+            </Link>
           </div>
 
-          <button type="submit" className="signin-btn">
+          <button
+            type="submit"
+            className="signin-btn"
+          >
             Sign In
           </button>
 

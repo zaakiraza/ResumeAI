@@ -1,11 +1,11 @@
 import express from "express";
 import { authController } from "../controllers/authController.js";
-import { authenticateToken } from "../Middleware/authentication.js";
+import { authenticateToken } from "../middleware/authentication.js";
 
 const authRouter = express.Router();
 
 authRouter.post("/login", authController.loginUser);
-authRouter.get("/adminLogin", authController.adminLogin);
+authRouter.post("/adminLogin", authController.adminLogin);
 
 authRouter.post("/register", authController.registerUser);
 authRouter.get("/resendOtp", authenticateToken, authController.resendOtp);
