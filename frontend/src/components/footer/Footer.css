@@ -496,6 +496,10 @@
   font-style: italic;
 }
 
+.fa-heart{
+  color: red;
+}
+
 /* ========== Animations ========== */
 @keyframes fadeInLeft {
   from {
@@ -650,6 +654,58 @@
   .footer-cta-btn {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: 0.9rem;
+  }
+}
+
+/* Extra small devices (landscape phones) */
+@media (max-width: 360px) {
+  .footer-main {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .footer-bottom {
+    padding: var(--spacing-sm);
+  }
+
+  .brand-name {
+    font-size: 1.6rem;
+  }
+
+  .brand-description {
+    font-size: 0.9rem;
+  }
+
+  .newsletter-input,
+  .newsletter-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.9rem;
+  }
+
+  .footer-cta {
+    padding: var(--spacing-sm);
+  }
+
+  .footer-cta-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.85rem;
+  }
+
+  .social-link {
+    min-width: 120px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.9rem;
+  }
+
+  .contact-info {
+    font-size: 0.9rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .footer-bottom-content {
+    font-size: 0.85rem;
   }
 }
 

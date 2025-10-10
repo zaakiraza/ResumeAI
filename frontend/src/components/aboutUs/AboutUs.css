@@ -59,7 +59,7 @@
 }
 
 .highlight-text::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -4px;
   left: 0;
@@ -268,7 +268,11 @@
   right: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, var(--color-hover-cyan) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    var(--color-hover-cyan) 0%,
+    transparent 70%
+  );
   opacity: 0;
   transform: scale(0);
   transition: all var(--transition-slow);
@@ -438,7 +442,7 @@
 }
 
 .step-connector::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
   top: 50%;
@@ -452,7 +456,8 @@
 
 /* Animations */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
   }
   50% {
@@ -465,7 +470,8 @@
     box-shadow: 0 0 5px var(--color-accent-gold);
   }
   100% {
-    box-shadow: 0 0 20px var(--color-accent-gold), 0 0 30px var(--color-accent-gold);
+    box-shadow: 0 0 20px var(--color-accent-gold),
+      0 0 30px var(--color-accent-gold);
   }
 }
 

@@ -41,7 +41,7 @@ const Contact = () => {
   const contactMethods = [
     {
       id: 1,
-      icon: "📧",
+      icon: <i className="fa-solid fa-envelope"></i>,
       title: "Email Support",
       description: "Get help via email",
       contact: "zaakiraza110@gmail.com",
@@ -49,7 +49,7 @@ const Contact = () => {
     },
     {
       id: 2,
-      icon: "📞",
+      icon: <i className="fa-solid fa-phone"></i>,
       title: "Phone Support",
       description: "Call us directly",
       contact: "+92 329 3271727",
@@ -68,17 +68,17 @@ const Contact = () => {
   const socialLinks = [
     {
       platform: "LinkedIn",
-      icon: <i class="fa-brands fa-linkedin"></i>,
+      icon: <i className="fa-brands fa-linkedin"></i>,
       url: "https://www.linkedin.com/in/zakiraza404/",
     },
     {
       platform: "Twitter",
-      icon: <i class="fa-brands fa-twitter"></i>,
+      icon: <i className="fa-brands fa-twitter"></i>,
       url: "https://x.com/Raza9232",
     },
     {
       platform: "GitHub",
-      icon: <i class="fa-brands fa-github"></i>,
+      icon: <i className="fa-brands fa-github"></i>,
       url: "https://github.com/zaakiraza",
     },
   ];
@@ -278,7 +278,7 @@ const Contact = () => {
             <a href="/faq" className="bottom-cta-btn primary">
               View FAQ
             </a>
-            <a href="/help" className="bottom-cta-btn secondary">
+            <a href="/contact" className="bottom-cta-btn secondary">
               Help Center
             </a>
           </div>

@@ -34,7 +34,7 @@ const Footer = () => {
     support: [
       { name: "Contact Us", href: "/contact" },
       { name: "FAQ", href: "/faq" },
-      { name: "Help Center", href: "/help" },
+      { name: "Help Center", href: "/contact" },
     ],
     quickLinks: [
       { name: "Services", href: "/services" },
@@ -46,17 +46,17 @@ const Footer = () => {
   const socialLinks = [
     {
       platform: "LinkedIn",
-      icon: <i class="fa-brands fa-linkedin"></i>,
+      icon: <i className="fa-brands fa-linkedin"></i>,
       url: "https://www.linkedin.com/in/zakiraza404/",
     },
     {
       platform: "Twitter",
-      icon: <i class="fa-brands fa-twitter"></i>,
+      icon: <i className="fa-brands fa-twitter"></i>,
       url: "https://x.com/Raza9232",
     },
     {
       platform: "GitHub",
-      icon: <i class="fa-brands fa-github"></i>,
+      icon: <i className="fa-brands fa-github"></i>,
       url: "https://github.com/zaakiraza",
     },
   ];
@@ -84,15 +84,22 @@ const Footer = () => {
             {/* Contact Info */}
             <div className="footer-contact">
               <div className="contact-item">
-                <span className="contact-icon">📧</span>
-                <a href="mailto:support@resumeai.com" className="contact-link">
-                  support@resumeai.com
+                <span className="contact-icon">
+                  <i className="fa-solid fa-envelope"></i>
+                </span>
+                <a
+                  href="mailto:zaakiraza110@gmail.com"
+                  className="contact-link"
+                >
+                  zaakiraza110@gmail.com
                 </a>
               </div>
               <div className="contact-item">
-                <span className="contact-icon">📞</span>
-                <a href="tel:+1234567890" className="contact-link">
-                  +123-456-7890
+                <span className="contact-icon">
+                  <i className="fa-solid fa-phone"></i>
+                </span>
+                <a href="tel:+923293271727" className="contact-link">
+                  +92 329 3271727
                 </a>
               </div>
             </div>
@@ -104,7 +111,7 @@ const Footer = () => {
                 {socialLinks.map((social) => (
                   <a
                     key={social.name}
-                    href={social.href}
+                    href={social.url}
                     className="social-link"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -224,7 +231,7 @@ const Footer = () => {
             {/* Footer CTA */}
             <div className="footer-cta">
               <h5 className="cta-title">Ready to Get Started?</h5>
-              <a href="/register" className="footer-cta-btn">
+              <a href="/signup" className="footer-cta-btn">
                 Start Building Your Resume
                 <span className="cta-btn-arrow">→</span>
               </a>
@@ -250,7 +257,8 @@ const Footer = () => {
               </a>
             </div>
             <p className="footer-credits">
-              Made with ❤️ for job seekers worldwide
+              Made with <i className="fa-solid fa-heart"></i> for job seekers
+              worldwide
             </p>
           </div>
         </div>

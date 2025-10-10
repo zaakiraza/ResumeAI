@@ -20,7 +20,7 @@ const Services = () => {
         "Ensure your resume is error-free with real-time grammar and style checks. Our AI will improve your resume's clarity and professionalism.",
       icon: "✓",
       ctaText: "Learn More",
-      ctaLink: "/grammar-check",
+      ctaLink: "/services",
     },
     {
       id: 3,
@@ -29,7 +29,7 @@ const Services = () => {
         "Reach a global job market by creating resumes in multiple languages. Expand your job opportunities internationally.",
       icon: "🌍",
       ctaText: "Explore More",
-      ctaLink: "/multilingual",
+      ctaLink: "/services",
     },
     {
       id: 4,
@@ -38,7 +38,7 @@ const Services = () => {
         "Choose from a variety of professionally designed templates and personalize your resume to match your style.",
       icon: "📄",
       ctaText: "See Templates",
-      ctaLink: "/templates",
+      ctaLink: "/signin",
     },
   ];
 
