@@ -194,7 +194,7 @@
 }
 
 .google-signup-btn {
-  background: var(--color-secondary-white);
+  background: #d5cfcf;
   color: var(--color-text-secondary);
   border: 2px solid var(--color-border-light);
   padding: var(--spacing-md);
@@ -493,20 +493,26 @@
   background: linear-gradient(135deg, #999999 0%, #cccccc 100%);
   cursor: not-allowed;
   color: #666666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.signup-btn.loading:hover {
+  transform: none;
+  background: linear-gradient(135deg, #999999 0%, #cccccc 100%);
+  box-shadow: 0 4px 12px var(--shadow-gold);
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
 }
 
 .signup-btn.loading::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid transparent;
-  border-top: 2px solid #666666;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  display: none;
 }
 
 @keyframes spin {
@@ -590,4 +596,85 @@
 .strength-text {
   font-size: 0.8rem;
   color: #666666;
+}
+
+/* Enhanced Password Strength Styles */
+.password-strength {
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+.password-strength.weak {
+  background: rgba(255, 68, 68, 0.1);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+.password-strength.medium {
+  background: rgba(255, 184, 0, 0.1);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
+
+.password-strength.strong {
+  background: rgba(255, 215, 0, 0.1);
+  color: var(--color-success-dark);
+  border: 1px solid var(--color-success);
+}
+
+.password-requirements {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(0, 184, 212, 0.05);
+  border: 1px solid rgba(0, 184, 212, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.password-requirements h4 {
+  color: var(--color-info);
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-xs);
+  text-align: left;
+}
+
+.password-requirements ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.password-requirements li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: 2px;
+  color: var(--color-text-muted);
+  text-align: left;
+}
+
+.password-requirements li.valid {
+  color: var(--color-success-dark);
+}
+
+.requirement-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Enhanced form input states */
+.form-group input.success:not(:focus) {
+  border-color: var(--color-border-success);
+  background: rgba(255, 215, 0, 0.05);
+}
+
+.form-group input.error:not(:focus) {
+  border-color: var(--color-border-error);
+  background: rgba(255, 68, 68, 0.05);
 }

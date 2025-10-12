@@ -208,7 +208,7 @@ const verifyChangePasswordOtp = async (req, res) => {
   return successResponse(res, 200, "Verified successfully");
 };
 
-const forgotPassword = async (req, res) => {
+const requestPassword = async (req, res) => {
   const { email } = req.body;
   if (!email) {
     return errorResponse(res, 404, "Email is are missing");
@@ -219,19 +219,66 @@ const forgotPassword = async (req, res) => {
     return errorResponse(res, 404, "User not found");
   }
 
-  const newPassword = Math.floor(100000 + Math.random() * 900000).toString();
+  // Generate a secure password that meets all requirements
+  const generateSecurePassword = () => {
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const numbers = "0123456789";
+    const specialChars = '!@#$%^&*(),.?":{}|<>';
+
+    // Ensure at least one character from each required category
+    let password = "";
+    password += uppercase[Math.floor(Math.random() * uppercase.length)]; // 1 uppercase
+    password += lowercase[Math.floor(Math.random() * lowercase.length)]; // 1 lowercase
+    password += numbers[Math.floor(Math.random() * numbers.length)]; // 1 number
+    password += specialChars[Math.floor(Math.random() * specialChars.length)]; // 1 special char
+
+    // Fill remaining 4 characters randomly from all categories (total 8 chars minimum)
+    const allChars = uppercase + lowercase + numbers + specialChars;
+    for (let i = 4; i < 12; i++) {
+      // Generate 12-character password for extra security
+      password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+
+    // Shuffle the password to avoid predictable patterns
+    return password
+      .split("")
+      .sort(() => Math.random() - 0.5)
+      .join("");
+  };
+
+  const newPassword = generateSecurePassword();
   userDetail.password = await hash(newPassword, 12);
   await userDetail.save();
 
   await sendEmail(
     userDetail.email,
-    "Forget password request",
-    `Dear ${userDetail.userName}, \n Your new password is ${newPassword}`
+    "Password Reset - Your New Secure Password",
+    `Dear ${userDetail.userName},
+
+Your password has been successfully reset. Here is your new secure password:
+
+Password: ${newPassword}
+
+For your security, please:
+1. Log in using this new password
+2. Change it to a password you'll remember
+3. Keep your password secure and don't share it with anyone
+
+This password meets all security requirements:
+✓ At least 8 characters
+✓ Contains uppercase letters
+✓ Contains lowercase letters  
+✓ Contains numbers
+✓ Contains special characters
+
+Best regards,
+ResumeAI Security Team`
   );
   return successResponse(
     res,
     200,
-    "Your new password has been send to your mail"
+    "Your new secure password has been sent to your email"
   );
 };
 
@@ -292,7 +339,7 @@ export const authController = {
   resendOtp,
   forgotPasswordOtp,
   verifyChangePasswordOtp,
-  forgotPassword,
+  requestPassword,
   changePassword,
   adminLogin,
 };

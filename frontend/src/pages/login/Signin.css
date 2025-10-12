@@ -196,7 +196,7 @@
 }
 
 .google-signin-btn {
-  background: var(--color-secondary-white);
+  background: #d5cfcf;
   color: var(--color-text-secondary);
   border: 2px solid var(--color-border-light);
   padding: var(--spacing-md);
@@ -440,20 +440,26 @@
 .signin-btn.loading {
   background: linear-gradient(135deg, #666666 0%, #888888 100%);
   cursor: not-allowed;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.signin-btn.loading:hover {
+  transform: none;
+  background: linear-gradient(135deg, #666666 0%, #888888 100%);
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
 }
 
 .signin-btn.loading::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid transparent;
-  border-top: 2px solid #ffffff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  display: none;
 }
 
 @keyframes spin {

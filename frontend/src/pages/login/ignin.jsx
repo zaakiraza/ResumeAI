@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { buildApiUrl, API_ENDPOINTS } from "../../config/api";
 import "./Signin.css";
 
 const SignIn = () => {
@@ -11,6 +12,7 @@ const SignIn = () => {
     rememberMe: false,
   });
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,8 +36,10 @@ const SignIn = () => {
       return;
     }
 
+    setIsLoading(true); // Start loading
+
     try {
-      const res = await axios.post("https://resume-backend-roan-nu.vercel.app/api/auth/login", {
+      const res = await axios.post(buildApiUrl(API_ENDPOINTS.LOGIN), {
         email: formData.email,
         password: formData.password,
       });
@@ -50,6 +54,8 @@ const SignIn = () => {
       setTimeout(() => {
         setMessage("");
       }, 3000);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -162,11 +168,31 @@ const SignIn = () => {
             </Link>
           </div>
 
-          <button
-            type="submit"
-            className="signin-btn"
+          <button 
+            type="submit" 
+            className={`signin-btn ${isLoading ? 'loading' : ''}`}
+            disabled={isLoading}
           >
-            Sign In
+            {isLoading ? (
+              <>
+                <svg 
+                  className="loading-spinner" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor"
+                >
+                  <circle cx="12" cy="12" r="10" strokeWidth="2" opacity="0.3"/>
+                  <path 
+                    d="M12 2a10 10 0 0 1 10 10" 
+                    strokeWidth="2" 
+                    strokeLinecap="round"
+                  />
+                </svg>
+                Signing In...
+              </>
+            ) : (
+              'Sign In'
+            )}
           </button>
 
           <div className="signin-divider">

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "./Signup.css";
+import { buildApiUrl, API_ENDPOINTS } from "../../config/api";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,52 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({
+    level: "",
+    score: 0,
+  });
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false,
+  });
   const navigate = useNavigate();
+
+  // Password strength checker
+  useEffect(() => {
+    if (formData.password) {
+      const requirements = {
+        length: formData.password.length >= 8,
+        uppercase: /[A-Z]/.test(formData.password),
+        lowercase: /[a-z]/.test(formData.password),
+        number: /\d/.test(formData.password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(formData.password),
+      };
+
+      setPasswordRequirements(requirements);
+
+      const score = Object.values(requirements).filter(Boolean).length;
+      let level = "";
+
+      if (score <= 2) level = "weak";
+      else if (score <= 4) level = "medium";
+      else level = "strong";
+
+      setPasswordStrength({ level, score });
+    } else {
+      setPasswordStrength({ level: "", score: 0 });
+      setPasswordRequirements({
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        special: false,
+      });
+    }
+  }, [formData.password]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -23,7 +69,6 @@ const Signup = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
 
-    // Clear specific error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -43,8 +88,9 @@ const Signup = () => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+    } else if (passwordStrength.score < 4) {
+      newErrors.password =
+        "Please create a stronger password that meets all requirements";
     }
 
     if (!formData.confirmPassword) {
@@ -58,19 +104,18 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-
-    // Clear any previous errors
     setErrors({});
+    setIsLoading(true);
 
     try {
-      const res = await axios.post("https://resume-backend-roan-nu.vercel.app/api/auth/register", {
+      const res = await axios.post(buildApiUrl(API_ENDPOINTS.REGISTER), {
         email: formData.email,
         password: formData.password,
       });
@@ -85,6 +130,8 @@ const Signup = () => {
       setTimeout(() => {
         setMessage("");
       }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -96,8 +143,20 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const getPasswordStrengthText = () => {
+    switch (passwordStrength.level) {
+      case "weak":
+        return "Weak Password";
+      case "medium":
+        return "Medium Strength";
+      case "strong":
+        return "Strong Password";
+      default:
+        return "";
+    }
+  };
+
   return (
-    // <div className="signup-container">
     <div className="signup-background">
       <div className="signup-card">
         <div className="signup-header">
@@ -107,7 +166,11 @@ const Signup = () => {
 
         <form className="signup-form" onSubmit={handleSubmit}>
           {message && (
-            <div className={`message ${message.includes('success') ? 'success' : 'error'}`}>
+            <div
+              className={`message ${
+                message.includes("success") ? "success" : "error"
+              }`}
+            >
               {message}
             </div>
           )}
@@ -136,7 +199,13 @@ const Signup = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Create a strong password"
-                className={errors.password ? "error" : ""}
+                className={`${errors.password ? "error" : ""} ${
+                  formData.password && passwordStrength.level === "strong"
+                    ? "success"
+                    : formData.password && passwordStrength.level === "weak"
+                    ? "error"
+                    : ""
+                }`}
                 required
               />
               <button
@@ -177,6 +246,91 @@ const Signup = () => {
                 )}
               </button>
             </div>
+
+            {formData.password && (
+              <div className={`password-strength ${passwordStrength.level}`}>
+                {getPasswordStrengthText()}
+              </div>
+            )}
+
+            {formData.password && (
+              <div className="password-requirements">
+                <h4>Password Requirements:</h4>
+                <ul>
+                  <li className={passwordRequirements.length ? "valid" : ""}>
+                    <svg
+                      className="requirement-icon"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    At least 8 characters
+                  </li>
+                  <li className={passwordRequirements.uppercase ? "valid" : ""}>
+                    <svg
+                      className="requirement-icon"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    One uppercase letter
+                  </li>
+                  <li className={passwordRequirements.lowercase ? "valid" : ""}>
+                    <svg
+                      className="requirement-icon"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    One lowercase letter
+                  </li>
+                  <li className={passwordRequirements.number ? "valid" : ""}>
+                    <svg
+                      className="requirement-icon"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    One number
+                  </li>
+                  <li className={passwordRequirements.special ? "valid" : ""}>
+                    <svg
+                      className="requirement-icon"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    One special character
+                  </li>
+                </ul>
+              </div>
+            )}
+
             {errors.password && (
               <span className="error-message">{errors.password}</span>
             )}
@@ -191,7 +345,15 @@ const Signup = () => {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 placeholder="Confirm your password"
-                className={errors.confirmPassword ? "error" : ""}
+                className={`${errors.confirmPassword ? "error" : ""} ${
+                  formData.confirmPassword &&
+                  formData.password === formData.confirmPassword
+                    ? "success"
+                    : formData.confirmPassword &&
+                      formData.password !== formData.confirmPassword
+                    ? "error"
+                    : ""
+                }`}
                 required
               />
               <button
@@ -239,8 +401,37 @@ const Signup = () => {
             )}
           </div>
 
-          <button type="submit" className="signup-btn">
-            Create Account
+          <button
+            type="submit"
+            className={`signup-btn ${isLoading ? "loading" : ""}`}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <svg
+                  className="loading-spinner"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    strokeWidth="2"
+                    opacity="0.3"
+                  />
+                  <path
+                    d="M12 2a10 10 0 0 1 10 10"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                Creating Account...
+              </>
+            ) : (
+              "Create Account"
+            )}
           </button>
 
           <div className="signup-divider">
@@ -280,7 +471,6 @@ const Signup = () => {
         </div>
       </div>
     </div>
-    // </div>
   );
 };
 

@@ -16,7 +16,7 @@ authRouter.post(
   "/verifyforgotPasswordOtp",
   authController.verifyChangePasswordOtp
 );
-authRouter.post("/forgotPassword", authController.forgotPassword);
+authRouter.post("/requestPassword", authController.requestPassword);
 
 authRouter.post(
   "/changePassword",
