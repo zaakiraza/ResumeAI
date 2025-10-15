@@ -1,21 +1,66 @@
-import Navbar from "./components/navbar/Navbar";
-import Home from "./pages/home/Home";
-import About from "./pages/about/About";
-import Services from "./pages/services/Services";
-import Contact from "./pages/contact/Contact";
-import Faq from "./pages/faq/Faq";
-import VerifyOtp from "./pages/VerifyOtp/VerifyOtp";
-import Dashboard from "./pages/dashboard/Dashboard";
-import ForgotPassword from "./pages/forgotPassword/orgotPassword";
-import ResetPassword from "./pages/ResetPassword/esetPassword";
-import SignIn from "./pages/login/ignin";
-import Signup from "./pages/register/signup";
-import { Route, Routes } from "react-router-dom";
+// Routes
+import ProtectedRoutes from "./Routes/ProtectedRoutes";
+
+// Navbars
+import Navbar from "./components/PublicComponents/navbar/Navbar";
+import DashboardNavbar from "./components/ProtectedComponents/dashboardNavbar/DashboardNavbar";
+
+// Public Pages
+import Home from "./pages/PublicPages/home/Home";
+import About from "./pages/PublicPages/about/About";
+import Services from "./pages/PublicPages/services/Services";
+import Contact from "./pages/PublicPages/contact/Contact";
+import Faq from "./pages/PublicPages/faq/Faq";
+import VerifyOtp from "./pages/PublicPages/VerifyOtp/VerifyOtp";
+import ForgotPassword from "./pages/PublicPages/forgotPassword/orgotPassword";
+import SignIn from "./pages/PublicPages/login/ignin";
+import Signup from "./pages/PublicPages/register/signup";
+
+// Protected Pages
+import Dashboard from "./pages/ProtectedPages/dashboard/Dashboard";
+import ResetPassword from "./pages/ProtectedPages/ResetPassword/esetPassword";
+import AITools from "./pages/ProtectedPages/AITools/AITools";
+import CreateResume from "./pages/ProtectedPages/CreateResume/CreateResume";
+import HelpSupport from "./pages/ProtectedPages/HelpSupport/HelpSupport";
+import MyResumes from "./pages/ProtectedPages/MyResumes/MyResumes";
+import Notifications from "./pages/ProtectedPages/notifications/Notifications";
+import Profile from "./pages/ProtectedPages/Profile/Profile";
+import Settings from "./pages/ProtectedPages/Settings/Settings";
+
+import { Route, Routes, useLocation } from "react-router-dom";
 
 function App() {
+  const dashboardAllowed = [
+    "/",
+    "/home",
+    "/signin",
+    "/signup",
+    "/about",
+    "/services",
+    "/contact",
+    "/faq",
+  ];
+
+  const dashboardNavbarAllowed = [
+    "/dashboard",
+    "/ai-tools",
+    "/create-resume",
+    "/helpSupport",
+    "/my-resumes",
+    "/notifications",
+    "/profile",
+    "/settings",
+  ];
+
+  const location = useLocation();
+  const isDashboardAllowed = dashboardAllowed.includes(location.pathname);
+  const isDashboardNavbarAllowed = dashboardNavbarAllowed.includes(
+    location.pathname
+  );
   return (
     <>
-      <Navbar />
+      {isDashboardAllowed && <Navbar />}
+      {isDashboardNavbarAllowed && <DashboardNavbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
@@ -27,9 +72,20 @@ function App() {
         <Route path="/faq" element={<Faq />} />
 
         <Route path="/VerifyOtp" element={<VerifyOtp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
-        <Route path="/resetPassword" element={<ResetPassword />} />
+
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/resetPassword" element={<ResetPassword />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/ai-tools" element={<AITools />} />
+          <Route path="/create-resume" element={<CreateResume />} />
+          <Route path="/helpSupport" element={<HelpSupport />} />
+          <Route path="/my-resumes" element={<MyResumes />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </>

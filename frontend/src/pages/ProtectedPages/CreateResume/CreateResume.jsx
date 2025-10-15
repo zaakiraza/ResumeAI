@@ -24,7 +24,6 @@ import {
   FaStepForward,
   FaMinus,
 } from "react-icons/fa";
-import DashboardNavbar from "../../../components/ProtectedComponents/dashboardNavbar/DashboardNavbar";
 import Footer from "../../../components/PublicComponents/footer/Footer";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import { buildApiUrl, API_ENDPOINTS } from "../../../config/api";
@@ -1478,15 +1477,20 @@ const CreateResume = () => {
 
             <div className="create-resume-download-options">
               <h3>Download Your Resume</h3>
-              
+
               {/* Template Selection for PDF */}
-              {(resumeId && resumeId !== "new") && (
+              {resumeId && resumeId !== "new" && (
                 <div className="template-selection">
                   <label htmlFor="download-template">Choose Template:</label>
-                  <select 
-                    id="download-template" 
+                  <select
+                    id="download-template"
                     defaultValue={formData.selectedTemplate || "modern"}
-                    onChange={(e) => setFormData(prev => ({...prev, selectedTemplate: e.target.value}))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        selectedTemplate: e.target.value,
+                      }))
+                    }
                   >
                     <option value="modern">Modern Professional</option>
                     <option value="classic">Classic Traditional</option>
@@ -1553,7 +1557,6 @@ const CreateResume = () => {
 
   return (
     <>
-      <DashboardNavbar />
       <div className="create-resume-page">
         {/* Hero Section */}
         <section className="create-resume-hero">

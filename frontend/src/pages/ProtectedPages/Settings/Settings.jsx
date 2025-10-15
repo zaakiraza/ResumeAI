@@ -1,11 +1,20 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
+import "./Settings.css";
 const Settings = () => {
   return (
     <div>
-      <h1>Setting</h1>
+      <div>
+        <h1>Setting</h1>
+        <Link to="/resetPassword">
+          <button className="button">Change Password</button>
+        </Link>
+      </div>
     </div>
   );
 };
 
 export default Settings;
+const styles = {
+  button: {},
+};
