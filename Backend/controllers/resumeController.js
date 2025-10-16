@@ -6,7 +6,7 @@ import PDFService from "../utils/pdfService.js";
 // Create a new resume
 export const createResume = async (req, res) => {
   try {
-    const userId = req.user.id; // From authentication middleware
+    const userId = req.user.userId; // From authentication middleware
     const { title, ...resumeData } = req.body;
 
     // Create new resume
@@ -52,7 +52,7 @@ export const createResume = async (req, res) => {
 // Get all resumes for a user
 export const getUserResumes = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { page = 1, limit = 10, status, template } = req.query;
 
     // Build filter
@@ -95,7 +95,7 @@ export const getUserResumes = async (req, res) => {
 export const getResumeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const resume = await Resume.findOne({ _id: id, userId }).select("-__v");
 
@@ -116,7 +116,7 @@ export const getResumeById = async (req, res) => {
 export const updateResume = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const updateData = req.body;
 
     const resume = await Resume.findOne({ _id: id, userId });
@@ -163,7 +163,7 @@ export const updateResume = async (req, res) => {
 export const deleteResume = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const resume = await Resume.findOne({ _id: id, userId });
 
@@ -193,7 +193,7 @@ export const deleteResume = async (req, res) => {
 export const duplicateResume = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const originalResume = await Resume.findOne({ _id: id, userId });
 
@@ -251,7 +251,7 @@ export const updateResumeStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     if (!["draft", "completed", "published"].includes(status)) {
       return errorResponse(res, 400, "Invalid status value");
@@ -297,7 +297,7 @@ export const updateResumeStatus = async (req, res) => {
 export const trackResumeDownload = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const resume = await Resume.findOne({ _id: id, userId });
 
@@ -397,7 +397,7 @@ export const getResumeTemplates = async (req, res) => {
 export const saveResumeAsDraft = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const updateData = req.body;
 
     let resume;
@@ -467,7 +467,7 @@ export const saveResumeAsDraft = async (req, res) => {
 export const downloadResumePDF = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { template } = req.query; // Optional template override
 
     // Find the resume

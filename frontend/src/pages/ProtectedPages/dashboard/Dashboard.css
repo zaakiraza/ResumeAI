@@ -750,3 +750,56 @@
     color: white;
   }
 }
+
+/* ===== LOADING AND EMPTY STATES ===== */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+}
+
+.no-resumes {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--color-text-secondary);
+}
+
+.no-resumes-icon {
+  font-size: 4rem;
+  color: var(--color-primary-light);
+  margin-bottom: 1.5rem;
+}
+
+.no-resumes h3 {
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.no-resumes p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.create-first-resume-btn {
+  background: var(--gradient-primary);
+  color: var(--color-text-white);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.create-first-resume-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}

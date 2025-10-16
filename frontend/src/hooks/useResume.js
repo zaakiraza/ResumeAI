@@ -99,8 +99,15 @@ export const useResumes = () => {
       setLoading(true);
       const result = await ResumeAPI.downloadPDF(resumeId, template);
       
-      // Track the download
-      await trackDownload(resumeId);
+      // The backend already handles download tracking, so we just need to update local state
+      // Update local state to reflect the download count increment
+      setResumes(prev => 
+        prev.map(resume => 
+          resume._id === resumeId 
+            ? { ...resume, downloadCount: (resume.downloadCount || 0) + 1 }
+            : resume
+        )
+      );
       
       return result;
     } catch (err) {
@@ -110,7 +117,7 @@ export const useResumes = () => {
     } finally {
       setLoading(false);
     }
-  }, [trackDownload]);
+  }, []);
 
   return {
     resumes,
@@ -226,8 +233,7 @@ export const useResume = (resumeId = null) => {
       setLoading(true);
       const result = await ResumeAPI.downloadPDF(id, template);
       
-      // Track the download
-      await trackDownload(id);
+      setResume(prev => prev ? { ...prev, downloadCount: (prev.downloadCount || 0) + 1 } : null);
       
       return result;
     } catch (err) {
@@ -237,7 +243,7 @@ export const useResume = (resumeId = null) => {
     } finally {
       setLoading(false);
     }
-  }, [resumeId, trackDownload]);
+  }, [resumeId]);
 
   // Load resume on mount if resumeId is provided
   useEffect(() => {

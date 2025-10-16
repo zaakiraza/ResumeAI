@@ -29,7 +29,7 @@ const resumeSchema = new mongoose.Schema(
     },
 
     // Career Summary
-    careerObjective: { type: String, required: true },
+    careerObjective: { type: String, required: false },
 
     // Work Experience
     workExperience: [

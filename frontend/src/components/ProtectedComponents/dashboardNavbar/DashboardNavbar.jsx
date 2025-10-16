@@ -12,19 +12,16 @@ import {
   faQuestionCircle,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { useUser } from "../../../hooks/useUser";
 import "./DashboardNavbar.css";
 
 const DashboardNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, loading: userLoading } = useUser();
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] =
     useState(false);
-  const [userData, setUserData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    avatar: null,
-  });
 
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
@@ -82,12 +79,20 @@ const DashboardNavbar = () => {
   };
 
   const getInitials = (name) => {
-    return name
-      .split(" ")
-      .map((part) => part.charAt(0))
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    return getUserName().charAt(0).toUpperCase();
+  };
+
+  const getUserName = () => {
+    if (userLoading) return "Loading...";
+    return user?.userName || user?.firstName + " " + user?.lastName || "User";
+  };
+
+  const getUserEmail = () => {
+    return user?.email || "user@example.com";
+  };
+
+  const getUserAvatar = () => {
+    return user?.profilePicture || null;
   };
 
   return (
@@ -216,47 +221,54 @@ const DashboardNavbar = () => {
 
           {/* User Profile */}
           <div className="profile-container" ref={profileDropdownRef}>
-            <button
-              className="profile-btn"
-              onClick={toggleProfileDropdown}
-              aria-label="User menu"
-              aria-expanded={isProfileDropdownOpen}
-              aria-haspopup="true"
-            >
-              <div className="profile-avatar">
-                {userData.avatar ? (
-                  <img src={userData.avatar} alt={userData.name} />
-                ) : (
-                  <span className="avatar-initials">
-                    {getInitials(userData.name)}
-                  </span>
-                )}
+            {userLoading ? (
+              <div className="profile-loading">
+                <div className="loading-avatar"></div>
+                <div className="loading-text">Loading...</div>
               </div>
-              <div className="profile-info">
-                <span className="profile-name">{userData.name}</span>
-                <FontAwesomeIcon
-                  icon={faChevronDown}
-                  className="profile-dropdown-arrow"
-                />
-              </div>
-            </button>
+            ) : (
+              <button
+                className="profile-btn"
+                onClick={toggleProfileDropdown}
+                aria-label="User menu"
+                aria-expanded={isProfileDropdownOpen}
+                aria-haspopup="true"
+              >
+                <div className="profile-avatar">
+                  {getUserAvatar() ? (
+                    <img src={getUserAvatar()} alt={getUserName()} />
+                  ) : (
+                    <span className="avatar-initials">
+                      {getInitials(getUserName())}
+                    </span>
+                  )}
+                </div>
+                <div className="profile-info">
+                  <span className="profile-name">{getUserName()}</span>
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    className="profile-dropdown-arrow"
+                  />
+                </div>
+              </button>
+            )}
 
             {isProfileDropdownOpen && (
               <div className="profile-dropdown" role="menu">
                 <div className="dropdown-header">
                   <div className="user-info">
                     <div className="user-avatar">
-                      {userData.avatar ? (
-                        <img src={userData.avatar} alt={userData.name} />
+                      {getUserAvatar() ? (
+                        <img src={getUserAvatar()} alt={getUserName()} />
                       ) : (
                         <span className="avatar-initials">
-                          {getInitials(userData.name)}
+                          {getInitials(getUserName())}
                         </span>
                       )}
                     </div>
                     <div className="user-details">
-                      <h3>{userData.name}</h3>
-                      <p>{userData.email}</p>
+                      <h3>{getUserName()}</h3>
+                      <p>{getUserEmail()}</p>
                     </div>
                   </div>
                 </div>
