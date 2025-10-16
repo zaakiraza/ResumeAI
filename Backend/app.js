@@ -9,6 +9,8 @@ import connectDB from "./utils/DB.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoute.js";
 import resumeRouter from "./routes/resumeRoutes.js";
+import notificationRouter from "./routes/notificationRoutes.js";
+import feedbackRouter from "./routes/feedbackRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -41,6 +43,8 @@ connectDB();
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/resumes", resumeRouter);
+app.use("/api/notifications", notificationRouter);
+app.use("/api/feedback", feedbackRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, World! Your server is running 🎉");
@@ -50,7 +54,6 @@ app.get("/", (req, res) => {
 if (process.env.NODE_ENV !== "production") {
   const port = process.env.PORT || 5003;
   app.listen(port, () => {
-    // console.log(`Click to Open Project: ${port}`);
     console.log("Server is running");
   });
 }

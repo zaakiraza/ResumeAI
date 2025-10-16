@@ -30,6 +30,27 @@ export const API_CONFIG = {
     RESUME_DRAFT: "/resumes/:id/draft",
     RESUME_NEW_DRAFT: "/resumes/draft",
     RESUME_TEMPLATES: "/resumes/templates",
+
+    // Notification endpoints
+    NOTIFICATIONS: "/notifications",
+    NOTIFICATION_BY_ID: "/notifications/:id",
+    NOTIFICATION_MARK_READ: "/notifications/:id/read",
+    NOTIFICATION_MARK_UNREAD: "/notifications/:id/unread",
+    NOTIFICATION_MARK_ALL_READ: "/notifications/mark-all-read",
+    NOTIFICATION_DELETE_READ: "/notifications/read",
+    NOTIFICATION_STATS: "/notifications/stats",
+    NOTIFICATION_PREFERENCES: "/notifications/preferences",
+
+    // Feedback endpoints
+    FEEDBACK: "/feedback",
+    FEEDBACK_ANONYMOUS: "/feedback/anonymous",
+    FEEDBACK_USER: "/feedback/user",
+    FEEDBACK_BY_ID: "/feedback/:id",
+    FEEDBACK_VOTE: "/feedback/:id/vote",
+    FEEDBACK_STATS: "/feedback/stats/overview",
+    FEEDBACK_STATUS: "/feedback/:id/status",
+    FEEDBACK_NOTES: "/feedback/:id/notes",
+    FEEDBACK_RESOLVE: "/feedback/:id/resolve",
   },
 };
 

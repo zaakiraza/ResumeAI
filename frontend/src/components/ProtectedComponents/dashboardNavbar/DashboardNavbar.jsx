@@ -11,17 +11,42 @@ import {
   faCog,
   faQuestionCircle,
   faSignOutAlt,
+  faTimes,
+  faCheck,
+  faComment,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../../hooks/useUser";
+import { useNotifications } from "../../../hooks/useNotifications";
+import FeedbackModal from "../../feedback/FeedbackModal";
 import "./DashboardNavbar.css";
 
 const DashboardNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, loading: userLoading } = useUser();
+  const { 
+    notifications, 
+    unreadCount, 
+    loading: notificationsLoading,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    fetchNotifications
+  } = useNotifications();
+  console.log(notifications);
+  
+  // Add periodic refresh for notifications
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchNotifications();
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] =
     useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
@@ -72,6 +97,49 @@ const DashboardNavbar = () => {
   const toggleNotificationDropdown = () => {
     setIsNotificationDropdownOpen(!isNotificationDropdownOpen);
     setIsProfileDropdownOpen(false);
+  };
+
+  const handleNotificationClick = async (notification) => {
+    try {
+      // Mark as read if unread
+      if (!notification.isRead) {
+        await markAsRead(notification._id);
+      }
+      
+      // Navigate to action URL if available
+      if (notification.actionUrl) {
+        navigate(notification.actionUrl);
+        setIsNotificationDropdownOpen(false);
+      }
+    } catch (error) {
+      console.error("Error handling notification click:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead();
+    } catch (error) {
+      console.error("Error marking all as read:", error);
+    }
+  };
+
+  const handleDeleteNotification = async (notificationId, event) => {
+    event.stopPropagation(); // Prevent notification click
+    try {
+      await deleteNotification(notificationId);
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    }
+  };
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case 'success': return faCheck;
+      case 'warning': return faBell;
+      case 'error': return faTimes;
+      default: return faBell;
+    }
   };
 
   const isActiveRoute = (path) => {
@@ -170,43 +238,79 @@ const DashboardNavbar = () => {
               aria-haspopup="true"
             >
               <FontAwesomeIcon icon={faBell} className="notification-icon" />
-              {/* <span className="notification-badge">3</span> */}
+              {unreadCount > 0 && (
+                <span className="notification-badge">{unreadCount}</span>
+              )}
             </button>
 
             {isNotificationDropdownOpen && (
               <div className="notification-dropdown" role="menu">
                 <div className="dropdown-header">
                   <h3>Notifications</h3>
+                  <div className="notification-actions">
+                    <button 
+                      className="refresh-btn"
+                      onClick={() => fetchNotifications()}
+                      title="Refresh notifications"
+                    >
+                      🔄
+                    </button>
+                    {unreadCount > 0 && (
+                      <button 
+                        className="mark-all-read-btn"
+                        onClick={handleMarkAllAsRead}
+                        title="Mark all as read"
+                      >
+                        <FontAwesomeIcon icon={faCheck} />
+                      </button>
+                    )}
+                  </div>
                 </div>
+                
                 <div className="notification-list">
-                  <div className="notification-item" role="menuitem">
-                    <div className="notification-content">
-                      <h4>Resume Updated</h4>
-                      <p>
-                        Your resume "Software Developer" was successfully
-                        updated.
-                      </p>
-                      <span className="notification-time">2 hours ago</span>
+                  {notificationsLoading ? (
+                    <div className="notification-loading">
+                      <p>Loading notifications...</p>
                     </div>
-                  </div>
-                  <div className="notification-item" role="menuitem">
-                    <div className="notification-content">
-                      <h4>AI Analysis Complete</h4>
-                      <p>Your resume analysis is ready for review.</p>
-                      <span className="notification-time">4 hours ago</span>
+                  ) : notifications.length > 0 ? (
+                    notifications.slice(0, 5).map((notification) => (
+                      <div 
+                        key={notification._id}
+                        className={`notification-item ${notification.isRead ? 'read' : 'unread'} ${notification.type}`} 
+                        role="menuitem"
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div className="notification-icon-wrapper">
+                          <FontAwesomeIcon 
+                            icon={getNotificationIcon(notification.type)} 
+                            className="notification-type-icon" 
+                          />
+                        </div>
+                        <div className="notification-content">
+                          <h4>{notification.title}</h4>
+                          <p>{notification.message}</p>
+                          <span className="notification-time">
+                            {notification.timeAgo || new Date(notification.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <button
+                          className="notification-delete-btn"
+                          onClick={(e) => handleDeleteNotification(notification._id, e)}
+                          title="Delete notification"
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-notifications">
+                      <FontAwesomeIcon icon={faBell} className="no-notifications-icon" />
+                      <p>No notifications yet</p>
+                      <span>You're all caught up!</span>
                     </div>
-                  </div>
-                  <div className="notification-item" role="menuitem">
-                    <div className="notification-content">
-                      <h4>Welcome to ResumeAI</h4>
-                      <p>
-                        Complete your profile to get personalized
-                        recommendations.
-                      </p>
-                      <span className="notification-time">1 day ago</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
+                
                 <div className="dropdown-footer">
                   <button
                     className="view-all-btn"
@@ -218,6 +322,16 @@ const DashboardNavbar = () => {
               </div>
             )}
           </div>
+
+          {/* Feedback Button */}
+          <button
+            className="feedback-btn"
+            onClick={() => setIsFeedbackModalOpen(true)}
+            aria-label="Send feedback"
+            title="Send feedback"
+          >
+            <FontAwesomeIcon icon={faComment} className="feedback-icon" />
+          </button>
 
           {/* User Profile */}
           <div className="profile-container" ref={profileDropdownRef}>
@@ -318,6 +432,12 @@ const DashboardNavbar = () => {
           </div>
         </div>
       </div>
+      
+      {/* Feedback Modal */}
+      <FeedbackModal 
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+      />
     </nav>
   );
 };

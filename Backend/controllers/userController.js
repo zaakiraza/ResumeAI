@@ -1,5 +1,7 @@
 import User from "../models/user.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
+import NotificationService from "../utils/notificationService.js";
+import AchievementService from "../utils/achievementService.js";
 
 export const userController = {
   getAllUsers: async (req, res) => {
@@ -64,6 +66,18 @@ export const userController = {
       // Calculate profile completion
       user.calculateProfileCompletion();
       await user.save();
+
+      // Create profile updated notification
+      await NotificationService.createProfileUpdatedNotification(
+        userId,
+        user.userName || user.email.split('@')[0]
+      );
+
+      // Check for profile completion achievements
+      await AchievementService.checkProfileAchievements(
+        userId,
+        user.profileCompletion || 0
+      );
 
       successResponse(res, 200, "Profile updated successfully", { user }, true);
     } catch (error) {

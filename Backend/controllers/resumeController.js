@@ -2,6 +2,8 @@ import Resume from "../models/resume.js";
 import User from "../models/user.js";
 import { successResponse, errorResponse } from "../utils/responseHandler.js";
 import PDFService from "../utils/pdfService.js";
+import NotificationService from "../utils/notificationService.js";
+import AchievementService from "../utils/achievementService.js";
 
 // Create a new resume
 export const createResume = async (req, res) => {
@@ -33,6 +35,21 @@ export const createResume = async (req, res) => {
       },
       $inc: { "analytics.totalResumesCreated": 1 },
     });
+
+    // Create resume created notification
+    await NotificationService.createResumeCreatedNotification(
+      userId,
+      savedResume.title,
+      savedResume._id
+    );
+
+    // Check for achievements
+    const userWithResumes = await User.findById(userId);
+    await AchievementService.checkResumeAchievements(
+      userId,
+      userWithResumes.resumes.length,
+      userWithResumes.analytics?.totalDownloads || 0
+    );
 
     successResponse(
       res,
@@ -144,6 +161,13 @@ export const updateResume = async (req, res) => {
       }
     );
 
+    // Create resume updated notification
+    await NotificationService.createResumeUpdatedNotification(
+      userId,
+      updatedResume.title,
+      updatedResume._id
+    );
+
     successResponse(
       res,
       200,
@@ -179,6 +203,12 @@ export const deleteResume = async (req, res) => {
       $pull: { resumes: { resumeId: id } },
       $inc: { "analytics.totalResumesCreated": -1 },
     });
+
+    // Create resume deleted notification
+    await NotificationService.createResumeDeletedNotification(
+      userId,
+      resume.title
+    );
 
     successResponse(res, 200, "Resume deleted successfully", null, true);
   } catch (error) {
@@ -231,6 +261,14 @@ export const duplicateResume = async (req, res) => {
       $inc: { "analytics.totalResumesCreated": 1 },
     });
 
+    // Create resume duplicated notification
+    await NotificationService.createResumeDuplicatedNotification(
+      userId,
+      originalResume.title,
+      savedDuplicate.title,
+      savedDuplicate._id
+    );
+
     successResponse(
       res,
       201,
@@ -278,6 +316,14 @@ export const updateResumeStatus = async (req, res) => {
       }
     );
 
+    // Create resume status changed notification
+    await NotificationService.createResumeStatusChangedNotification(
+      userId,
+      resume.title,
+      status,
+      resume._id
+    );
+
     successResponse(
       res,
       200,
@@ -321,6 +367,21 @@ export const trackResumeDownload = async (req, res) => {
       {
         arrayFilters: [{ "elem.resumeId": id }],
       }
+    );
+
+    // Create resume download notification
+    await NotificationService.createResumeDownloadNotification(
+      userId,
+      resume.title,
+      resume.downloadCount
+    );
+
+    // Check for download achievements
+    const userWithAnalytics = await User.findById(userId);
+    await AchievementService.checkResumeAchievements(
+      userId,
+      userWithAnalytics.resumes.length,
+      userWithAnalytics.analytics?.totalDownloads || 0
     );
 
     successResponse(
@@ -451,6 +512,13 @@ export const saveResumeAsDraft = async (req, res) => {
         $inc: { "analytics.totalResumesCreated": 1 },
       });
 
+      // Create resume created notification for new resumes
+      await NotificationService.createResumeCreatedNotification(
+        userId,
+        savedResume.title,
+        savedResume._id
+      );
+
       resume = savedResume;
     }
 
@@ -499,6 +567,21 @@ export const downloadResumePDF = async (req, res) => {
       {
         arrayFilters: [{ "elem.resumeId": id }],
       }
+    );
+
+    // Create resume download notification
+    await NotificationService.createResumeDownloadNotification(
+      userId,
+      resume.title,
+      resume.downloadCount
+    );
+
+    // Check for download achievements
+    const userForAchievements = await User.findById(userId);
+    await AchievementService.checkResumeAchievements(
+      userId,
+      userForAchievements.resumes.length,
+      userForAchievements.analytics?.totalDownloads || 0
     );
 
     // Set response headers for PDF download

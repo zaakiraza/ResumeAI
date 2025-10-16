@@ -3,6 +3,7 @@ import User from "../models/user.js";
 import { hash, compare } from "bcrypt";
 import { sendEmail } from "../utils/nodeMailer.js";
 import jwt from "jsonwebtoken";
+import NotificationService from "../utils/notificationService.js";
 
 const registerUser = async (req, res) => {
   try {
@@ -105,6 +106,18 @@ const verifyOtp = async (req, res) => {
     userDetail.otp = undefined;
     userDetail.otpExpiresAt = undefined;
     await userDetail.save();
+
+    // Create welcome notification
+    await NotificationService.createWelcomeNotification(
+      userDetail._id,
+      userDetail.userName
+    );
+
+    // Create profile completion reminder
+    await NotificationService.createProfileUpdateReminder(
+      userDetail._id,
+      userDetail.userName
+    );
 
     return successResponse(res, 200, "OTP verified successfully", {
       userId: userDetail._id,
