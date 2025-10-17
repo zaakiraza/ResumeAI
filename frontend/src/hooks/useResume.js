@@ -98,9 +98,7 @@ export const useResumes = () => {
     try {
       setLoading(true);
       const result = await ResumeAPI.downloadPDF(resumeId, template);
-      
-      // The backend already handles download tracking, so we just need to update local state
-      // Update local state to reflect the download count increment
+      console.log(result);      
       setResumes(prev => 
         prev.map(resume => 
           resume._id === resumeId 
