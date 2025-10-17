@@ -187,8 +187,23 @@ export class ResumeAPI {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to download PDF');
+        // Try parsing JSON error, otherwise fallback to text
+        let errMsg = 'Failed to download PDF';
+        try {
+          const errorData = await response.json();
+          errMsg = errorData.message || JSON.stringify(errorData) || errMsg;
+        } catch (parseErr) {
+          try {
+            const text = await response.text();
+            errMsg = text || errMsg;
+          } catch (textErr) {
+            // ignore
+          }
+        }
+        const status = response.status;
+        const finalErr = new Error(`${errMsg} (status: ${status})`);
+        console.error('Download PDF non-ok response:', status, errMsg);
+        throw finalErr;
       }
 
       // Get filename from Content-Disposition header or create default

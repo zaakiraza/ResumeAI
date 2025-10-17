@@ -17,16 +17,38 @@ export class PDFService {
     let browser = null;
     
     try {
-      // Launch puppeteer browser
-      browser = await puppeteer.launch({
-        headless: 'new',
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu'
-        ]
-      });
+            // Prefer serverless-friendly Chromium when running in serverless environments (Vercel, AWS Lambda)
+            const isServerless = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.AWS_EXECUTION_ENV);
+
+            if (isServerless) {
+                try {
+                    // Try to use chrome-aws-lambda and puppeteer-core if available in production
+                    const chromium = await import('chrome-aws-lambda');
+                    const pptr = await import('puppeteer-core');
+
+                    const executablePath = await chromium.executablePath || chromium.path || null;
+
+                    browser = await pptr.launch({
+                        args: chromium.args.concat(['--disable-dev-shm-usage']),
+                        defaultViewport: null,
+                        executablePath: executablePath || undefined,
+                        headless: chromium.headless,
+                    });
+                } catch (err) {
+                    // If serverless-specific packages are not installed, fall back to bundled puppeteer
+                    console.warn('chrome-aws-lambda/puppeteer-core not available or failed to launch, falling back to puppeteer:', err?.message || err);
+                    browser = await puppeteer.launch({
+                        headless: 'new',
+                        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+                    });
+                }
+            } else {
+                // Local / non-serverless environment
+                browser = await puppeteer.launch({
+                    headless: 'new',
+                    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+                });
+            }
 
       const page = await browser.newPage();
       

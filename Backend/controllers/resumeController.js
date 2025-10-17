@@ -603,6 +603,14 @@ export const downloadResumePDF = async (req, res) => {
       selectedTemplate
     );
 
+      // Log PDF buffer size and environment for diagnostics
+      try {
+        const sizeBytes = Buffer.byteLength(pdfBuffer);
+        console.info(`Generated PDF buffer size: ${sizeBytes} bytes. ENV: ${process.env.NODE_ENV || 'unknown'}`);
+      } catch (logErr) {
+        console.warn('Could not determine PDF buffer size:', logErr?.message || logErr);
+      }
+
     // Track download
     resume.downloadCount += 1;
     await resume.save();
@@ -637,14 +645,27 @@ export const downloadResumePDF = async (req, res) => {
     );
 
     // Set response headers for PDF download
-    const filename = `${resume.personalInfo?.fullName || "Resume"}_${selectedTemplate}.pdf`;
+    const filename = `${resume.personalInfo?.fullName || 'Resume'}_${selectedTemplate}.pdf`;
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
-    res.setHeader("Content-Length", pdfBuffer.length);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    // Use Buffer.byteLength for accurate length
+    try {
+      const len = Buffer.byteLength(pdfBuffer);
+      res.setHeader('Content-Length', len);
+    } catch (lenErr) {
+      // Fallback if Buffer isn't usable in the environment
+      console.warn('Failed to compute PDF buffer length:', lenErr?.message || lenErr);
+    }
 
     // Send PDF buffer
-    res.end(pdfBuffer);
+    try {
+      res.end(pdfBuffer);
+    } catch (sendErr) {
+      console.error('Error sending PDF buffer:', sendErr);
+      // If sending fails, return an error status to the client
+      return errorResponse(res, 500, 'Failed to send PDF');
+    }
   } catch (error) {
     console.error("Download PDF Error:", error);
     errorResponse(res, 500, "Failed to generate PDF", {
