@@ -123,7 +123,6 @@ function Dashboard() {
       </div>
     );
   }
-  console.log(user);
   return (
     <div className="dashboard-page">
       <div className="dashboard-container">

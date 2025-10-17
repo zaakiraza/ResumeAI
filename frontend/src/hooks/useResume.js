@@ -164,8 +164,45 @@ export const useResume = (resumeId = null) => {
       setLoading(true);
       setError(null);
       const response = await ResumeAPI.createResume(resumeData);
-      setResume(response.data.resume);
-      return response.data.resume;
+      const created = response.data.resume;
+
+      // Try to fetch generated PDF from backend and upload to Cloudinary
+      try {
+        // Fetch PDF blob from backend
+        const pdfBlob = await ResumeAPI.fetchPDFBlob(created._id, created.selectedTemplate || created.template);
+
+        if (pdfBlob) {
+          // Convert blob to File for Cloudinary upload
+          const filename = `${(created.personalInfo?.fullName || 'resume')}_${created._id}.pdf`;
+          const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+          // Upload to Cloudinary
+          const cloudResult = await import('../services/cloudinaryService.js').then(m => m.default.uploadFile(file, {
+            folder: `resumeai/user-resume/${created.userId || created.userId}`,
+          })).catch(err => {
+            console.error('Cloudinary dynamic import/upload error:', err);
+            return null;
+          });
+
+          if (cloudResult && cloudResult.success) {
+            const pdfUrl = cloudResult.secure_url || cloudResult.url;
+
+            // Update resume with pdfUrl
+            try {
+              await ResumeAPI.updateResume(created._id, { pdfUrl });
+              // reflect in local state
+              created.pdfUrl = pdfUrl;
+            } catch (err) {
+              console.error('Failed to save pdfUrl to resume:', err);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('PDF generation/upload flow failed:', err);
+      }
++
+      setResume(created);
+      return created;
     } catch (err) {
       setError(err.message);
       console.error('Create resume error:', err);

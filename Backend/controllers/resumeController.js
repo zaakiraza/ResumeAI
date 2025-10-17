@@ -45,6 +45,55 @@ export const createResume = async (req, res) => {
 
     // Check for achievements
     const userWithResumes = await User.findById(userId);
+
+    // If this is the user's first resume and the resume contains a profile picture,
+    // and the user's profilePicture is not set, copy the resume image to user's profile
+    try {
+      const isFirstResume =
+        Array.isArray(userWithResumes.resumes) &&
+        userWithResumes.resumes.length === 1;
+      const resumeProfilePic =
+        savedResume.personalInfo && savedResume.personalInfo.profilePicture;
+
+      if (
+        isFirstResume &&
+        resumeProfilePic &&
+        (!userWithResumes.profilePicture ||
+          userWithResumes.profilePicture === "")
+      ) {
+        userWithResumes.profilePicture = resumeProfilePic;
+        // Recalculate profile completion percentage if method available
+        if (typeof userWithResumes.calculateProfileCompletion === "function") {
+          userWithResumes.calculateProfileCompletion();
+        }
+        await userWithResumes.save();
+
+        // Optionally notify the user about profile picture update
+        if (
+          NotificationService &&
+          typeof NotificationService.createProfileUpdatedNotification ===
+            "function"
+        ) {
+          try {
+            await NotificationService.createProfileUpdatedNotification(
+              userId,
+              "We added your resume image to your profile"
+            );
+          } catch (notifErr) {
+            console.error(
+              "Failed to send profile updated notification:",
+              notifErr
+            );
+          }
+        }
+      }
+    } catch (picErr) {
+      console.error(
+        "Error while copying resume image to user profile:",
+        picErr
+      );
+    }
+
     await AchievementService.checkResumeAchievements(
       userId,
       userWithResumes.resumes.length,
@@ -546,10 +595,13 @@ export const downloadResumePDF = async (req, res) => {
     }
 
     // Use specified template or resume's template
-    const selectedTemplate = template || resume.selectedTemplate || 'modern';
+    const selectedTemplate = template || resume.selectedTemplate || "modern";
 
     // Generate PDF
-    const pdfBuffer = await PDFService.generateResumePDF(resume, selectedTemplate);
+    const pdfBuffer = await PDFService.generateResumePDF(
+      resume,
+      selectedTemplate
+    );
 
     // Track download
     resume.downloadCount += 1;
@@ -585,15 +637,14 @@ export const downloadResumePDF = async (req, res) => {
     );
 
     // Set response headers for PDF download
-    const filename = `${resume.personalInfo?.fullName || 'Resume'}_${selectedTemplate}.pdf`;
-    
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', pdfBuffer.length);
-    
+    const filename = `${resume.personalInfo?.fullName || "Resume"}_${selectedTemplate}.pdf`;
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Length", pdfBuffer.length);
+
     // Send PDF buffer
     res.end(pdfBuffer);
-
   } catch (error) {
     console.error("Download PDF Error:", error);
     errorResponse(res, 500, "Failed to generate PDF", {

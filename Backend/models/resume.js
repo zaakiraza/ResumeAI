@@ -89,6 +89,8 @@ const resumeSchema = new mongoose.Schema(
     // Tracking
     lastModified: { type: Date, default: Date.now },
     isPublic: { type: Boolean, default: false },
+    // PDF URL stored after generating and uploading to Cloudinary
+    pdfUrl: { type: String },
   },
   { timestamps: true }
 );

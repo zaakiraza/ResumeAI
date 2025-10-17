@@ -24,23 +24,30 @@ const DashboardNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, loading: userLoading } = useUser();
-  const { 
-    notifications, 
-    unreadCount, 
+  console.log(user);
+  const {
+    notifications,
+    unreadCount,
     loading: notificationsLoading,
     markAsRead,
     markAllAsRead,
     deleteNotification,
-    fetchNotifications
+    fetchNotifications,
   } = useNotifications();
-  console.log(notifications);
-  
+
+  // Prepare badge display (cap at 99+)
+  const badgeText =
+    typeof unreadCount === "number" && unreadCount > 0
+      ? unreadCount > 99
+        ? "99+"
+        : String(unreadCount)
+      : null;
+
   // Add periodic refresh for notifications
   useEffect(() => {
     const interval = setInterval(() => {
       fetchNotifications();
     }, 30000); // Refresh every 30 seconds
-
     return () => clearInterval(interval);
   }, [fetchNotifications]);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -105,7 +112,7 @@ const DashboardNavbar = () => {
       if (!notification.isRead) {
         await markAsRead(notification._id);
       }
-      
+
       // Navigate to action URL if available
       if (notification.actionUrl) {
         navigate(notification.actionUrl);
@@ -135,10 +142,14 @@ const DashboardNavbar = () => {
 
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'success': return faCheck;
-      case 'warning': return faBell;
-      case 'error': return faTimes;
-      default: return faBell;
+      case "success":
+        return faCheck;
+      case "warning":
+        return faBell;
+      case "error":
+        return faTimes;
+      default:
+        return faBell;
     }
   };
 
@@ -238,8 +249,16 @@ const DashboardNavbar = () => {
               aria-haspopup="true"
             >
               <FontAwesomeIcon icon={faBell} className="notification-icon" />
-              {unreadCount > 0 && (
-                <span className="notification-badge">{unreadCount}</span>
+              {badgeText && (
+                <span
+                  className="notification-badge"
+                  role="status"
+                  aria-live="polite"
+                  aria-label={`${badgeText} unread notifications`}
+                  title={`${badgeText} unread notifications`}
+                >
+                  {badgeText}
+                </span>
               )}
             </button>
 
@@ -248,7 +267,7 @@ const DashboardNavbar = () => {
                 <div className="dropdown-header">
                   <h3>Notifications</h3>
                   <div className="notification-actions">
-                    <button 
+                    <button
                       className="refresh-btn"
                       onClick={() => fetchNotifications()}
                       title="Refresh notifications"
@@ -256,7 +275,7 @@ const DashboardNavbar = () => {
                       🔄
                     </button>
                     {unreadCount > 0 && (
-                      <button 
+                      <button
                         className="mark-all-read-btn"
                         onClick={handleMarkAllAsRead}
                         title="Mark all as read"
@@ -266,7 +285,7 @@ const DashboardNavbar = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="notification-list">
                   {notificationsLoading ? (
                     <div className="notification-loading">
@@ -274,28 +293,35 @@ const DashboardNavbar = () => {
                     </div>
                   ) : notifications.length > 0 ? (
                     notifications.slice(0, 5).map((notification) => (
-                      <div 
+                      <div
                         key={notification._id}
-                        className={`notification-item ${notification.isRead ? 'read' : 'unread'} ${notification.type}`} 
+                        className={`notification-item ${
+                          notification.isRead ? "read" : "unread"
+                        } ${notification.type}`}
                         role="menuitem"
                         onClick={() => handleNotificationClick(notification)}
                       >
                         <div className="notification-icon-wrapper">
-                          <FontAwesomeIcon 
-                            icon={getNotificationIcon(notification.type)} 
-                            className="notification-type-icon" 
+                          <FontAwesomeIcon
+                            icon={getNotificationIcon(notification.type)}
+                            className="notification-type-icon"
                           />
                         </div>
                         <div className="notification-content">
                           <h4>{notification.title}</h4>
                           <p>{notification.message}</p>
                           <span className="notification-time">
-                            {notification.timeAgo || new Date(notification.createdAt).toLocaleDateString()}
+                            {notification.timeAgo ||
+                              new Date(
+                                notification.createdAt
+                              ).toLocaleDateString()}
                           </span>
                         </div>
                         <button
                           className="notification-delete-btn"
-                          onClick={(e) => handleDeleteNotification(notification._id, e)}
+                          onClick={(e) =>
+                            handleDeleteNotification(notification._id, e)
+                          }
                           title="Delete notification"
                         >
                           <FontAwesomeIcon icon={faTimes} />
@@ -304,13 +330,16 @@ const DashboardNavbar = () => {
                     ))
                   ) : (
                     <div className="no-notifications">
-                      <FontAwesomeIcon icon={faBell} className="no-notifications-icon" />
+                      <FontAwesomeIcon
+                        icon={faBell}
+                        className="no-notifications-icon"
+                      />
                       <p>No notifications yet</p>
                       <span>You're all caught up!</span>
                     </div>
                   )}
                 </div>
-                
+
                 <div className="dropdown-footer">
                   <button
                     className="view-all-btn"
@@ -432,9 +461,9 @@ const DashboardNavbar = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Feedback Modal */}
-      <FeedbackModal 
+      <FeedbackModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}
       />

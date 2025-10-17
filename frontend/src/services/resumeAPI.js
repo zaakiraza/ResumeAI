@@ -227,6 +227,33 @@ export class ResumeAPI {
     }
   }
 
+  // Fetch PDF as Blob (for frontend upload)
+  static async fetchPDFBlob(resumeId, template = null) {
+    try {
+      let url = buildApiUrl(API_CONFIG.ENDPOINTS.RESUME_PDF.replace(':id', resumeId));
+
+      if (template) {
+        url += `?template=${encodeURIComponent(template)}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: buildHeaders(),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch PDF');
+      }
+
+      const blob = await response.blob();
+      return blob;
+    } catch (error) {
+      console.error('Fetch PDF Blob Error:', error);
+      throw error;
+    }
+  }
+
   // Save resume as draft (auto-save)
   static async saveAsDraft(resumeId, resumeData) {
     try {

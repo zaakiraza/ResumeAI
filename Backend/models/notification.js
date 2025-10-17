@@ -37,6 +37,7 @@ const notificationSchema = new mongoose.Schema(
         "reminder",
         "welcome",
         "security",
+        "achievement",
       ],
       default: "system",
     },
@@ -238,7 +239,11 @@ notificationSchema.statics.markAllAsRead = async function (userId) {
 // Pre-save middleware
 notificationSchema.pre("save", function (next) {
   // Set expiresAt to 30 days from now if not specified for non-critical notifications
-  if (!this.expiresAt && this.priority !== "urgent" && this.priority !== "high") {
+  if (
+    !this.expiresAt &&
+    this.priority !== "urgent" &&
+    this.priority !== "high"
+  ) {
     this.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
   }
   next();
