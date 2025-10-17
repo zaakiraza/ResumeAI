@@ -151,24 +151,6 @@
   color: var(--color-text-muted);
 }
 
-.notification-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: var(--color-error);
-  color: white;
-  font-size: 0.7rem;
-  font-weight: var(--font-weight-bold);
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-
 /* ===== FEEDBACK BUTTON ===== */
 .feedback-btn {
   display: flex;
@@ -497,17 +479,17 @@
   .dashboard-navbar-container {
     padding: 0 1.5rem;
   }
-  
+
   .nav-text {
     display: none;
   }
-  
+
   .dashboard-nav-link {
     padding: 0.75rem;
     min-width: 44px;
     justify-content: center;
   }
-  
+
   .profile-name {
     display: none;
   }
@@ -517,20 +499,20 @@
   .dashboard-navbar-container {
     padding: 0 1rem;
   }
-  
+
   .dashboard-logo h1 {
     font-size: 1.5rem;
   }
-  
+
   .dashboard-nav-items {
     gap: 0.25rem;
   }
-  
+
   .notification-dropdown,
   .profile-dropdown {
     min-width: 280px;
   }
-  
+
   .notification-dropdown {
     width: 320px;
   }
@@ -540,21 +522,21 @@
   .dashboard-navbar-container {
     padding: 0 0.75rem;
   }
-  
+
   .dashboard-logo h1 {
     font-size: 1.3rem;
   }
-  
+
   .dashboard-navbar-right {
     gap: 0.5rem;
   }
-  
+
   .notification-dropdown,
   .profile-dropdown {
     min-width: 260px;
     right: -1rem;
   }
-  
+
   .notification-dropdown {
     width: 300px;
   }
@@ -571,12 +553,12 @@
   .profile-dropdown {
     transition: none;
   }
-  
+
   .notification-dropdown,
   .profile-dropdown {
     animation: none;
   }
-  
+
   .profile-dropdown-arrow {
     transition: none;
   }
@@ -596,12 +578,12 @@
     box-shadow: none;
     border-bottom: 1px solid #ccc;
   }
-  
+
   .notification-container,
   .profile-container {
     display: none;
   }
-  
+
   .dashboard-nav-link {
     color: #000;
   }
@@ -630,7 +612,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
   }
   50% {
@@ -641,9 +624,9 @@
 /* ===== ENHANCED NOTIFICATION STYLES ===== */
 .notification-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--color-primary-red);
+  top: -2px;
+  right: -2px;
+  background: #00b0ff;
   color: white;
   border-radius: 50%;
   width: 20px;
@@ -657,9 +640,15 @@
 }
 
 @keyframes notificationPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .mark-all-read-btn {

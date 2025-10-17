@@ -174,6 +174,8 @@ const DashboardNavbar = () => {
     return user?.profilePicture || null;
   };
 
+  console.log(badgeText);
+
   return (
     <nav
       className="dashboard-navbar"
@@ -249,7 +251,8 @@ const DashboardNavbar = () => {
               aria-haspopup="true"
             >
               <FontAwesomeIcon icon={faBell} className="notification-icon" />
-              {badgeText && (
+              <span className="notification-badge">{badgeText}</span>
+              {/* {badgeText && (
                 <span
                   className="notification-badge"
                   role="status"
@@ -257,9 +260,9 @@ const DashboardNavbar = () => {
                   aria-label={`${badgeText} unread notifications`}
                   title={`${badgeText} unread notifications`}
                 >
-                  {badgeText}
+                  {badgeText || 3}
                 </span>
-              )}
+              )} */}
             </button>
 
             {isNotificationDropdownOpen && (
