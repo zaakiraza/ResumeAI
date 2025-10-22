@@ -208,6 +208,28 @@ export const deleteAllReadNotifications = async (req, res) => {
   }
 };
 
+// Delete all notifications for a user
+export const deleteAllNotifications = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.userId); // Convert to ObjectId
+
+    const result = await Notification.deleteMany({ userId });
+
+    successResponse(
+      res,
+      200,
+      "All notifications deleted successfully",
+      { deletedCount: result.deletedCount },
+      true
+    );
+  } catch (error) {
+    console.error("Delete All Notifications Error:", error);
+    errorResponse(res, 500, "Failed to delete all notifications", {
+      error: error.message,
+    });
+  }
+};
+
 // Get notification statistics
 export const getNotificationStats = async (req, res) => {
   try {

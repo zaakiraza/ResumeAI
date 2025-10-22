@@ -8,6 +8,7 @@ import {
   markAllNotificationsAsRead,
   deleteNotification,
   deleteAllReadNotifications,
+  deleteAllNotifications,
   getNotificationStats,
   createNotification,
   getNotificationPreferences,
@@ -29,6 +30,7 @@ notificationRouter.put('/preferences', updateNotificationPreferences); // PUT /a
 // Bulk operations
 notificationRouter.patch('/mark-all-read', markAllNotificationsAsRead); // PATCH /api/notifications/mark-all-read - Mark all as read
 notificationRouter.delete('/read', deleteAllReadNotifications);       // DELETE /api/notifications/read - Delete all read notifications
+notificationRouter.delete('/all', deleteAllNotifications);           // DELETE /api/notifications/all - Delete all notifications
 
 // Individual notification operations
 notificationRouter.get('/:id', getNotificationById);                 // GET /api/notifications/:id - Get notification by ID
