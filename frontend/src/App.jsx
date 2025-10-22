@@ -21,6 +21,7 @@ import Dashboard from "./pages/ProtectedPages/dashboard/Dashboard";
 import ResetPassword from "./pages/ProtectedPages/ResetPassword/esetPassword";
 import AITools from "./pages/ProtectedPages/AITools/AITools";
 import CreateResume from "./pages/ProtectedPages/CreateResume/CreateResume";
+import EditResume from "./pages/ProtectedPages/EditResume/EditResume";
 import HelpSupport from "./pages/ProtectedPages/HelpSupport/HelpSupport";
 import MyResumes from "./pages/ProtectedPages/MyResumes/MyResumes";
 import Notifications from "./pages/ProtectedPages/notifications/Notifications";
@@ -45,6 +46,7 @@ function App() {
     "/dashboard",
     "/ai-tools",
     "/create-resume",
+    "/edit-resume",
     "/helpSupport",
     "/my-resumes",
     "/notifications",
@@ -79,6 +81,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/ai-tools" element={<AITools />} />
           <Route path="/create-resume" element={<CreateResume />} />
+          <Route path="/edit-resume/:id" element={<EditResume />} />
           <Route path="/helpSupport" element={<HelpSupport />} />
           <Route path="/my-resumes" element={<MyResumes />} />
           <Route path="/notifications" element={<Notifications />} />

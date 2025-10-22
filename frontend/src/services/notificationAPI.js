@@ -152,6 +152,23 @@ export class NotificationAPI {
       throw error;
     }
   }
+  
+  // Delete all notifications (both read and unread)
+  static async deleteAll() {
+    try {
+      const url = buildApiUrl(API_CONFIG.ENDPOINTS.NOTIFICATION_DELETE_ALL);
+      
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: buildHeaders(),
+      });
+      
+      return await handleResponse(response);
+    } catch (error) {
+      console.error('Delete All Notifications Error:', error);
+      throw error;
+    }
+  }
 
   // Get notification statistics
   static async getNotificationStats() {
@@ -231,6 +248,7 @@ export const {
   markAllAsRead,
   deleteNotification,
   deleteAllRead,
+  deleteAll,
   getNotificationStats,
   createNotification,
   getNotificationPreferences,

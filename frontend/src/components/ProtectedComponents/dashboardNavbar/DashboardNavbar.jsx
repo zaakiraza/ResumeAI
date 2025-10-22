@@ -251,8 +251,7 @@ const DashboardNavbar = () => {
               aria-haspopup="true"
             >
               <FontAwesomeIcon icon={faBell} className="notification-icon" />
-              <span className="notification-badge">{badgeText}</span>
-              {/* {badgeText && (
+              {badgeText && (
                 <span
                   className="notification-badge"
                   role="status"
@@ -260,9 +259,9 @@ const DashboardNavbar = () => {
                   aria-label={`${badgeText} unread notifications`}
                   title={`${badgeText} unread notifications`}
                 >
-                  {badgeText || 3}
+                  {badgeText}
                 </span>
-              )} */}
+              )}
             </button>
 
             {isNotificationDropdownOpen && (
@@ -347,7 +346,9 @@ const DashboardNavbar = () => {
                   <button
                     className="view-all-btn"
                     onClick={() => navigate("/notifications")}
+                    aria-label="View all notifications"
                   >
+                    <FontAwesomeIcon icon={faBell} className="view-all-icon" />
                     View All Notifications
                   </button>
                 </div>

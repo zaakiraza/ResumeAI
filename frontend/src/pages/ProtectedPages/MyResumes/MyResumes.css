@@ -1,0 +1,861 @@
+/* My Resumes Page Styles */
+.my-resumes-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header Section */
+.my-resumes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.my-resumes-title h1 {
+  font-size: 2.25rem;
+  background: linear-gradient(120deg, #2563eb, #0ea5e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+}
+
+.my-resumes-title p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.create-resume-button {
+  background: linear-gradient(120deg, #2563eb, #0ea5e9);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+}
+
+.create-resume-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+}
+
+.create-resume-button svg {
+  font-size: 1rem;
+}
+
+/* Filters Section */
+.my-resumes-filters {
+  background-color: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  align-items: center;
+  border: 1px solid #f3f4f6;
+}
+
+.search-bar {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 2.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #f9fafb;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background-color: white;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+  font-size: 1.1rem;
+}
+
+.filter-options {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-group label {
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.filter-group select {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background-color: #f9fafb;
+  min-width: 150px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1em;
+  padding-right: 2.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background-color: white;
+}
+
+.sort-direction-button {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-direction-button:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background-color: #eff6ff;
+}
+
+/* Error, Loading, and Empty States */
+.my-resumes-error,
+.my-resumes-loading,
+.my-resumes-empty,
+.my-resumes-empty-search {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.my-resumes-error {
+  color: var(--color-danger);
+}
+
+.my-resumes-error svg,
+.my-resumes-loading svg {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.my-resumes-error p,
+.my-resumes-loading p {
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.my-resumes-error button {
+  background-color: var(--color-danger);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.my-resumes-error button:hover {
+  background-color: #e53e3e;
+}
+
+.my-resumes-loading {
+  color: var(--color-primary-blue);
+}
+
+.empty-illustration {
+  font-size: 4rem;
+  color: var(--color-primary-cyan);
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.my-resumes-empty h2,
+.my-resumes-empty-search h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+.my-resumes-empty p,
+.my-resumes-empty-search p {
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+.create-first-resume {
+  background-color: var(--color-primary-cyan);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.create-first-resume:hover {
+  background-color: var(--color-primary-blue);
+  transform: translateY(-2px);
+}
+
+.clear-filters {
+  background-color: white;
+  border: 1px solid var(--color-border-medium);
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-filters:hover {
+  border-color: var(--color-primary-cyan);
+  color: var(--color-primary-cyan);
+}
+
+/* Resumes Grid */
+.my-resumes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.75rem;
+  margin-top: 1rem;
+}
+
+.resume-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.resume-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #e6e6e6;
+}
+
+.resume-card-header {
+  padding: 1.25rem 1.25rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  position: relative;
+}
+
+.status-badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.status-badge-draft {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.status-badge-completed {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.status-badge-published {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.resume-actions {
+  position: relative;
+}
+
+.action-menu-button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.action-menu-button:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+  opacity: 1;
+}
+
+.action-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  z-index: 10;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  min-width: 190px;
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+}
+
+.action-menu-dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 0.85rem 1.1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.action-menu-dropdown button:hover {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.action-menu-dropdown button.delete-action {
+  color: #ef4444;
+}
+
+.action-menu-dropdown button.delete-action:hover {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.resume-card-content {
+  padding: 0 1.25rem 1.25rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.resume-icon {
+  width: 48px;
+  height: 48px;
+  background-color: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.resume-title {
+  font-size: 1.35rem;
+  color: #111827;
+  font-weight: 600;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2; /* For compatibility */
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+}
+
+.resume-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.resume-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.resume-info-item svg {
+  color: #9ca3af;
+  width: 14px;
+  min-width: 14px;
+}
+
+.resume-card-footer {
+  padding: 1.25rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fafafa;
+}
+
+.resume-template {
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-transform: capitalize;
+  font-weight: 500;
+  padding-right: 14px;
+}
+
+.resume-quick-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.quick-action-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.quick-action-button:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.quick-action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+  color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+/* Delete Modal */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.delete-modal {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 1.75rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+.delete-modal h2 {
+  color: var(--color-danger);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.delete-modal p {
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.warning-text {
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+.delete-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancel-button,
+.delete-button {
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cancel-button {
+  background-color: white;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-medium);
+}
+
+.cancel-button:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.delete-button {
+  background-color: var(--color-danger);
+  color: white;
+  border: none;
+}
+
+.delete-button:hover {
+  background-color: #e53e3e;
+}
+
+.delete-button:disabled,
+.cancel-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Resume Analytics Section */
+.resume-analytics-section {
+  margin-top: 3rem;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+  padding: 2rem;
+  border: 1px solid #f3f4f6;
+}
+
+.analytics-header {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.analytics-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: linear-gradient(120deg, #2563eb, #0ea5e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+
+.analytics-header .analytics-icon {
+  font-size: 1.5rem;
+  color: #2563eb;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.analytics-card {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  border: 1px solid #f3f4f6;
+}
+
+.analytics-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 
+              0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}
+
+.analytics-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(14, 165, 233, 0.1));
+}
+
+.analytics-icon-wrapper.completed {
+  color: #059669;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.1));
+}
+
+.analytics-icon-wrapper.draft {
+  color: #f59e0b;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+}
+
+.analytics-icon-wrapper.downloads {
+  color: #7c3aed;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.1));
+}
+
+.analytics-icon-wrapper.templates {
+  color: #ec4899;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(244, 114, 182, 0.1));
+}
+
+.analytics-number {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0.5rem 0;
+}
+
+.analytics-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+}
+
+.analytics-chart-container {
+  background-color: white;
+  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.chart-placeholder {
+  text-align: center;
+}
+
+.chart-placeholder .analytics-icon {
+  font-size: 3rem;
+  color: #d1d5db;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.chart-placeholder h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.chart-placeholder p {
+  font-size: 0.95rem;
+  color: #6b7280;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .my-resumes-container {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .my-resumes-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .my-resumes-title h1 {
+    font-size: 1.85rem;
+  }
+
+  .create-resume-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .resume-analytics-section {
+    padding: 1.5rem;
+  }
+  
+  .analytics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .analytics-number {
+    font-size: 2rem;
+  }
+
+  .my-resumes-filters {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.25rem;
+  }
+
+  .filter-options {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-group label {
+    min-width: 80px;
+  }
+
+  .filter-group select {
+    flex-grow: 1;
+  }
+
+  .my-resumes-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .resume-card {
+    max-width: 100%;
+  }
+
+  .resume-card-header,
+  .resume-card-content,
+  .resume-card-footer {
+    padding: 1rem;
+  }
+
+  .resume-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-resumes-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .my-resumes-title h1 {
+    font-size: 1.7rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .my-resumes-title p {
+    font-size: 0.9rem;
+  }
+
+  .delete-modal {
+    margin: 1rem;
+    padding: 1.25rem;
+    width: calc(100% - 2rem);
+    max-width: none;
+  }
+
+  .delete-modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .cancel-button,
+  .delete-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-bar input {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.7rem;
+  }
+}

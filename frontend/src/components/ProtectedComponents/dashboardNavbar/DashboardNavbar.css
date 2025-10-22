@@ -285,10 +285,13 @@
   max-height: 400px;
   overflow: hidden;
   animation: dropdownSlideIn var(--transition-normal);
+  display: flex;
+  flex-direction: column;
 }
 
 .notification-dropdown {
   width: 360px;
+  max-height: 450px; /* Increased to ensure footer is visible */
 }
 
 .profile-dropdown {
@@ -323,6 +326,7 @@
 .notification-list {
   max-height: 300px;
   overflow-y: auto;
+  position: relative; /* For positioning the view-all button */
 }
 
 .notification-item {
@@ -360,26 +364,44 @@
 }
 
 .dropdown-footer {
-  padding: 0.75rem 1rem;
+  padding: 1rem;
   border-top: 1px solid var(--color-border-light);
   background: var(--color-bg-secondary);
+  text-align: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: auto; /* Push to bottom when flex container */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Add subtle shadow to make it stand out */
 }
 
 .view-all-btn {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.85rem;
   border: none;
   background: var(--color-primary-cyan);
   color: white;
   border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  font-weight: var(--font-weight-medium);
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: background-color var(--transition-normal);
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.3px;
 }
 
 .view-all-btn:hover {
   background: var(--color-primary-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.view-all-icon {
+  font-size: 1rem;
 }
 
 /* ===== PROFILE DROPDOWN ===== */
@@ -815,3 +837,5 @@
   font-size: 0.875rem;
   color: var(--color-text-tertiary);
 }
+
+/* Removed view-all-inline styles as they're no longer needed */

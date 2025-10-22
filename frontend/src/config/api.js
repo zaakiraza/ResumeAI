@@ -38,6 +38,7 @@ export const API_CONFIG = {
     NOTIFICATION_MARK_UNREAD: "/notifications/:id/unread",
     NOTIFICATION_MARK_ALL_READ: "/notifications/mark-all-read",
     NOTIFICATION_DELETE_READ: "/notifications/read",
+    NOTIFICATION_DELETE_ALL: "/notifications/all",
     NOTIFICATION_STATS: "/notifications/stats",
     NOTIFICATION_PREFERENCES: "/notifications/preferences",
 

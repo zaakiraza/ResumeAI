@@ -135,6 +135,7 @@ const Notifications = () => {
       );
       setSelectedNotifications([]);
       setShowDeleteConfirm(false);
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting notifications:", error);
     }

@@ -1475,10 +1475,9 @@ const CreateResume = () => {
               </div>
             </div>
 
-            <div className="create-resume-download-options">
+            {/* <div className="create-resume-download-options">
               <h3>Download Your Resume</h3>
 
-              {/* Template Selection for PDF */}
               {resumeId && resumeId !== "new" && (
                 <div className="template-selection">
                   <label htmlFor="download-template">Choose Template:</label>
@@ -1528,7 +1527,7 @@ const CreateResume = () => {
                   Please save your resume first to enable downloads.
                 </p>
               )}
-            </div>
+            </div> */}
           </div>
         );
 

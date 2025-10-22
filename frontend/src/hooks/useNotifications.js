@@ -123,6 +123,21 @@ export const useNotifications = () => {
       throw err;
     }
   }, []);
+  
+  // Delete all notifications (both read and unread)
+  const deleteAllNotifications = useCallback(async () => {
+    try {
+      await NotificationAPI.deleteAll();
+      setNotifications([]);
+      setUnreadCount(0);
+      window.location.reload();
+      return true;
+    } catch (err) {
+      setError(err.message);
+      console.error("Delete all notifications error:", err);
+      throw err;
+    }
+  }, []);
 
   // Get stats
   const getStats = useCallback(async () => {
@@ -165,6 +180,7 @@ export const useNotifications = () => {
     markAllAsRead,
     deleteNotification,
     deleteAllRead,
+    deleteAllNotifications,
     getStats,
     setError,
   };
