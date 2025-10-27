@@ -454,7 +454,7 @@
 
 .loading-spinner {
   width: 20px;
-  height: 20px;
+  height: 2px;
   animation: spin 1s linear infinite;
 }
 

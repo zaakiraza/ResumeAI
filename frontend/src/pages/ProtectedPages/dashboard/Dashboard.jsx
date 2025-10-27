@@ -82,6 +82,7 @@ function Dashboard() {
 
   const handleDownloadResume = async (resumeId) => {
     try {
+      console.log(resumeId);
       await downloadPDF(resumeId);
     } catch (error) {
       console.error("Error downloading resume:", error);
@@ -118,7 +119,7 @@ function Dashboard() {
     return (
       <div className="dashboard-page">
         <div className="dashboard-container">
-          <div className="loading-spinner">Loading dashboard...</div>
+          <div className="loading-spinner"></div>
         </div>
       </div>
     );

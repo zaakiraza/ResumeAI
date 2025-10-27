@@ -168,31 +168,8 @@ const SignIn = () => {
             </Link>
           </div>
 
-          <button 
-            type="submit" 
-            className={`signin-btn ${isLoading ? 'loading' : ''}`}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <svg 
-                  className="loading-spinner" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor"
-                >
-                  <circle cx="12" cy="12" r="10" strokeWidth="2" opacity="0.3"/>
-                  <path 
-                    d="M12 2a10 10 0 0 1 10 10" 
-                    strokeWidth="2" 
-                    strokeLinecap="round"
-                  />
-                </svg>
-                Signing In...
-              </>
-            ) : (
-              'Sign In'
-            )}
+          <button type="submit" className={"signin-btn"} cursor={isLoading ? "not-allowed" : "pointer"} disabled={isLoading}>
+            {isLoading ? "signing in..." : "Sign In"}
           </button>
 
           <div className="signin-divider">

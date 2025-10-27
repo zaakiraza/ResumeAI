@@ -11,6 +11,7 @@ import userRouter from "./routes/userRoute.js";
 import resumeRouter from "./routes/resumeRoutes.js";
 import notificationRouter from "./routes/notificationRoutes.js";
 import feedbackRouter from "./routes/feedbackRoutes.js";
+import aiToolsRouter from "./routes/aiToolsRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -45,6 +46,7 @@ app.use("/api/users", userRouter);
 app.use("/api/resumes", resumeRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/feedback", feedbackRouter);
+app.use("/api/ai", aiToolsRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, World! Your server is running 🎉");
