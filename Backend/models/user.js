@@ -2,13 +2,18 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    userName: { type: String, required: false, unique: true },
+    userName: { type: String, required: false, unique: true, sparse: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: false }, // Made optional for Google OAuth users
     isAdmin: { type: Boolean, default: false },
     verified: { type: Boolean, default: false },
     otp: { type: String, default: null },
     otpExpiresAt: { type: Date, default: null },
+    
+    // OAuth fields
+    googleId: { type: String, unique: true, sparse: true },
+    authProvider: { type: String, enum: ["local", "google"], default: "local" },
+    isEmailVerified: { type: Boolean, default: false },
     
     // User Profile Information
     firstName: { type: String, default: "" },

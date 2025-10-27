@@ -63,6 +63,13 @@ const SignIn = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleGoogleSignIn = () => {
+    // Get the API base URL
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5003';
+    // Redirect to Google OAuth
+    window.location.href = `${API_BASE_URL}/auth/google`;
+  };
+
   return (
     // <div className="signin-container">
     <div className="signin-background">
@@ -176,7 +183,7 @@ const SignIn = () => {
             <span>or</span>
           </div>
 
-          <button type="button" className="google-signin-btn">
+          <button type="button" className="google-signin-btn" onClick={handleGoogleSignIn}>
             <svg className="google-icon" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"

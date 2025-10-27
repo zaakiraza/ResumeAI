@@ -27,6 +27,8 @@ import MyResumes from "./pages/ProtectedPages/MyResumes/MyResumes";
 import Notifications from "./pages/ProtectedPages/notifications/Notifications";
 import Profile from "./pages/ProtectedPages/Profile/Profile";
 import Settings from "./pages/ProtectedPages/Settings/Settings";
+// import ViewResumePDF from "./pages/ProtectedPages/ViewResumePDF/ViewResumePDF";
+import AuthSuccess from "./pages/AuthSuccess";
 
 import { Route, Routes, useLocation } from "react-router-dom";
 
@@ -75,6 +77,7 @@ function App() {
 
         <Route path="/VerifyOtp" element={<VerifyOtp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
+        <Route path="/auth/success" element={<AuthSuccess />} />
 
         <Route element={<ProtectedRoutes />}>
           <Route path="/resetPassword" element={<ResetPassword />} />

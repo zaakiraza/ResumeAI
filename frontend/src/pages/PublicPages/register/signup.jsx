@@ -143,6 +143,13 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleGoogleSignUp = () => {
+    // Get the API base URL
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5003';
+    // Redirect to Google OAuth
+    window.location.href = `${API_BASE_URL}/auth/google`;
+  };
+
   const getPasswordStrengthText = () => {
     switch (passwordStrength.level) {
       case "weak":
@@ -438,7 +445,7 @@ const Signup = () => {
             <span>or</span>
           </div>
 
-          <button type="button" className="google-signup-btn">
+          <button type="button" className="google-signup-btn" onClick={handleGoogleSignUp}>
             <svg className="google-icon" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"

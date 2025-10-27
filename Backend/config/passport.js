@@ -1,12 +1,12 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/user');
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import User from '../models/user.js';
 
 // Configure Google OAuth strategy
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/api/auth/google/callback"
+  callbackURL: process.env.GOOGLE_CALLBACK_URL || "/api/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     // Check if user already exists with this Google ID
@@ -24,18 +24,24 @@ passport.use(new GoogleStrategy({
       // User exists with this email, link the Google account
       emailUser.googleId = profile.id;
       emailUser.profilePicture = profile.photos[0]?.value || emailUser.profilePicture;
+      emailUser.authProvider = 'google';
+      emailUser.isEmailVerified = true;
+      emailUser.verified = true;
       await emailUser.save();
       return done(null, emailUser);
     }
 
     // Create new user
+    const userName = profile.emails[0].value.split('@')[0];
     const newUser = new User({
       googleId: profile.id,
       email: profile.emails[0].value,
+      userName: userName,
       firstName: profile.name.givenName,
       lastName: profile.name.familyName,
       profilePicture: profile.photos[0]?.value,
-      isEmailVerified: true, // Google emails are already verified
+      isEmailVerified: true,
+      verified: true,
       authProvider: 'google'
     });
 
@@ -62,4 +68,4 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-module.exports = passport;
+export default passport;
