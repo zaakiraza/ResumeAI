@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Footer from "../../../components/PublicComponents/footer/Footer";
+import toast from "react-hot-toast";
 import "./Contact.css";
 
 const Contact = () => {
@@ -23,7 +24,7 @@ const Contact = () => {
     // Handle form submission here
     console.log("Form submitted:", formData);
     // You can add form submission logic here
-    alert("Thank you for your message! We'll get back to you soon.");
+    toast.success("Thank you for your message! We'll get back to you soon.");
     // Reset form
     setFormData({
       fullName: "",

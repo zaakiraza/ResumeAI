@@ -1,0 +1,497 @@
+/* Help & Support Container */
+.help-support-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 100px);
+}
+
+/* Header */
+.help-support-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.help-support-header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(120deg, #2563EB, #0EA5E9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.help-support-header p {
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
+/* Tabs */
+.help-support-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+  justify-content: center;
+}
+
+.help-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border: none;
+  background: none;
+  color: #6b7280;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.help-tab:hover {
+  color: #2563EB;
+}
+
+.help-tab.active {
+  color: #2563EB;
+  border-bottom-color: #2563EB;
+}
+
+/* Quick Help Cards */
+.quick-help-section {
+  margin-bottom: 3rem;
+}
+
+.quick-help-section h2 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.quick-help-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.quick-help-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.quick-help-card:hover {
+  border-color: #2563EB;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+}
+
+.quick-help-card .card-icon {
+  font-size: 3rem;
+  color: #2563EB;
+  margin-bottom: 1rem;
+}
+
+.quick-help-card h3 {
+  font-size: 1.2rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.quick-help-card p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Help Form Section */
+.help-form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.help-form-section h2 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 2rem;
+}
+
+/* Submit Messages */
+.submit-message {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.submit-message.success {
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+}
+
+.submit-message.success svg {
+  color: #10b981;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.submit-message.error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.submit-message.error svg {
+  color: #ef4444;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.submit-message > div {
+  flex: 1;
+}
+
+.submit-message h4 {
+  font-size: 1rem;
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+}
+
+.submit-message p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.submit-message > button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: inherit;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.submit-message > button:hover {
+  opacity: 1;
+}
+
+/* Form Styles */
+.help-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-hint {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin-top: -0.25rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563EB, #0EA5E9);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+/* FAQ Section */
+.faq-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.faq-section h2 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.faq-item {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem;
+  transition: all 0.2s;
+}
+
+.faq-item:hover {
+  border-color: #2563EB;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+.faq-item h3 {
+  font-size: 1.2rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.faq-item h3::before {
+  content: 'Q:';
+  color: #2563EB;
+  font-weight: 700;
+}
+
+.faq-item p {
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Resources Section */
+.resources-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.resources-section h2 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.resource-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.resource-card:hover {
+  border-color: #2563EB;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+}
+
+.resource-icon {
+  font-size: 3rem;
+  color: #2563EB;
+  margin-bottom: 1rem;
+}
+
+.resource-card h3 {
+  font-size: 1.3rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.resource-card p {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.resource-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2563EB;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.resource-link:hover {
+  gap: 0.75rem;
+  color: #0EA5E9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .help-support-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .help-support-header h1 {
+    font-size: 2rem;
+  }
+
+  .help-support-tabs {
+    overflow-x: auto;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .help-tab {
+    padding: 0.75rem 1.5rem;
+    white-space: nowrap;
+  }
+
+  .quick-help-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .help-form-section {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .help-support-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .help-support-header p {
+    font-size: 1rem;
+  }
+
+  .help-tab {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .quick-help-card {
+    padding: 1.5rem;
+  }
+
+  .quick-help-card .card-icon {
+    font-size: 2.5rem;
+  }
+
+  .help-form-section h2,
+  .faq-section h2,
+  .resources-section h2 {
+    font-size: 1.5rem;
+  }
+}

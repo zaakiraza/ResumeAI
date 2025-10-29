@@ -31,6 +31,7 @@ import Settings from "./pages/ProtectedPages/Settings/Settings";
 import AuthSuccess from "./pages/AuthSuccess";
 
 import { Route, Routes, useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const dashboardAllowed = [
@@ -63,6 +64,35 @@ function App() {
   );
   return (
     <>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#fff',
+            color: '#363636',
+            padding: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 4000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
       {isDashboardAllowed && <Navbar />}
       {isDashboardNavbarAllowed && <DashboardNavbar />}
       <Routes>

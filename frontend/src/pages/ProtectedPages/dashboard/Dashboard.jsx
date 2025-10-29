@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import toast from "react-hot-toast";
 import {
   faPlus,
   faFileAlt,
@@ -84,9 +85,10 @@ function Dashboard() {
     try {
       console.log(resumeId);
       await downloadPDF(resumeId);
+      toast.success("Resume downloaded successfully!");
     } catch (error) {
       console.error("Error downloading resume:", error);
-      alert("Failed to download resume. Please try again.");
+      toast.error("Failed to download resume. Please try again.");
     }
   };
 
@@ -94,9 +96,10 @@ function Dashboard() {
     if (window.confirm("Are you sure you want to delete this resume?")) {
       try {
         await deleteResume(resumeId);
+        toast.success("Resume deleted successfully!");
       } catch (error) {
         console.error("Error deleting resume:", error);
-        alert("Failed to delete resume. Please try again.");
+        toast.error("Failed to delete resume. Please try again.");
       }
     }
   };

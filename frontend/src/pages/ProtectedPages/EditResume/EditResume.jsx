@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSave, FaDownload, FaFileAlt, FaTimes, FaCheck, FaGlobe, FaTrash, FaPlus } from 'react-icons/fa';
 import { useResume } from '../../../hooks/useResume';
+import toast from 'react-hot-toast';
 import './EditResume.css';
 
 const EditResume = () => {
@@ -163,9 +164,10 @@ const EditResume = () => {
       const template = formData?.selectedTemplate || formData?.template || 'modern';
       console.log("Downloading with template:", template);
       await downloadPDF(id, template);
+      toast.success("Resume downloaded successfully!");
     } catch (err) {
       console.error("Error downloading resume:", err);
-      alert(`Failed to download resume as ${format.toUpperCase()}. Please try again.`);
+      toast.error(`Failed to download resume as ${format.toUpperCase()}. Please try again.`);
     }
   };
   

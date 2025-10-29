@@ -23,7 +23,7 @@
 }
 
 /* ===== LOGO SECTION ===== */
-.dashboard-logo h1 {
+.dashboard-logo img {
   font-size: 1.8rem;
   font-weight: var(--font-weight-bold);
   color: var(--color-primary-blue);
@@ -34,14 +34,14 @@
   user-select: none;
 }
 
-.dashboard-logo h1:hover,
-.dashboard-logo h1:focus {
+.dashboard-logo img:hover,
+.dashboard-logo img:focus {
   color: var(--color-primary-cyan);
   outline: none;
   transform: scale(1.02);
 }
 
-.dashboard-logo h1:focus-visible {
+.dashboard-logo img:focus-visible {
   outline: 2px solid var(--color-primary-cyan);
   outline-offset: 2px;
 }
@@ -522,7 +522,7 @@
     padding: 0 1rem;
   }
 
-  .dashboard-logo h1 {
+  .dashboard-logo img {
     font-size: 1.5rem;
   }
 
@@ -545,7 +545,7 @@
     padding: 0 0.75rem;
   }
 
-  .dashboard-logo h1 {
+  .dashboard-logo img {
     font-size: 1.3rem;
   }
 

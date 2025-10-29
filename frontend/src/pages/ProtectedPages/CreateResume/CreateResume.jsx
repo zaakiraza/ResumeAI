@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useResume, useTemplates } from "../../../hooks/useResume";
 import { useSkills } from "../../../hooks/useSkills";
+import toast from "react-hot-toast";
 import {
   FaUser,
   FaPen,
@@ -472,15 +473,15 @@ const CreateResume = () => {
 
       if (result) {
         if (isDraft) {
-          alert("Resume saved as draft!");
+          toast.success("Resume saved as draft!");
         } else {
-          alert("Resume saved successfully!");
+          toast.success("Resume saved successfully!");
           navigate("/dashboard");
         }
       }
     } catch (error) {
       console.error("Error saving resume:", error);
-      alert("An error occurred while saving. Please try again.");
+      toast.error("An error occurred while saving. Please try again.");
     }
   };
 
@@ -492,7 +493,7 @@ const CreateResume = () => {
   const handleDownloadResume = async (format = "pdf", template = null) => {
     // Check if resume is saved
     if (!resumeId || resumeId === "new") {
-      alert("Please save your resume first before downloading.");
+      toast.error("Please save your resume first before downloading.");
       return;
     }
 
@@ -520,10 +521,10 @@ const CreateResume = () => {
         document.body.removeChild(notification);
 
         // Show success message
-        alert(`Resume downloaded successfully as ${result.filename}!`);
+        toast.success(`Resume downloaded successfully as ${result.filename}!`);
       } else {
         // For Word and Text formats, show coming soon message
-        alert(
+        toast.info(
           `${format.toUpperCase()} download will be available soon! PDF download is currently available.`
         );
       }
@@ -536,7 +537,7 @@ const CreateResume = () => {
         document.body.removeChild(notification);
       }
 
-      alert("Failed to download resume. Please try again.");
+      toast.error("Failed to download resume. Please try again.");
     }
   };
 

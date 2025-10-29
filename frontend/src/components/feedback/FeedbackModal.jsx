@@ -12,6 +12,7 @@ import {
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import { useFeedback } from "../../hooks/useFeedback";
+import toast from "react-hot-toast";
 import "./FeedbackModal.css";
 
 const FeedbackModal = ({ isOpen, onClose, isAnonymous = false }) => {
@@ -136,10 +137,10 @@ const FeedbackModal = ({ isOpen, onClose, isAnonymous = false }) => {
       onClose();
       
       // Show success message (you might want to use a toast notification)
-      alert("Thank you for your feedback! We'll review it shortly.");
+      toast.success("Thank you for your feedback! We'll review it shortly.");
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert("Failed to submit feedback. Please try again.");
+      toast.error("Failed to submit feedback. Please try again.");
     }
   };
 

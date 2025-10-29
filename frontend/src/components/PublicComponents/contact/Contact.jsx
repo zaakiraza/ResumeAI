@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import "./Contact.css";
 
 const Contact = () => {
@@ -110,7 +111,7 @@ const Contact = () => {
                       ? (e) => {
                           e.preventDefault();
                           // Here you would trigger your live chat widget
-                          alert("Live chat feature coming soon!");
+                          toast.info("Live chat feature coming soon!", { duration: 3000 });
                         }
                       : undefined
                   }
