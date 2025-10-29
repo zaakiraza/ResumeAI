@@ -139,11 +139,13 @@
 }
 
 /* ========================================
-   Dark Mode Support (Optional)
+   Dark Mode Support (Optional - Currently Disabled)
+   Note: Uncomment this section to enable automatic dark mode
+   based on system preferences
    ======================================== */
+/*
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Override specific colors for dark mode */
     --color-bg-primary: #1a1a1a;
     --color-bg-secondary: #2a2a2a;
     --color-bg-light: #333333;
@@ -157,6 +159,7 @@
     --shadow-medium: rgba(255, 255, 255, 0.15);
   }
 }
+*/
 
 /* ========================================
    High Contrast Mode Support

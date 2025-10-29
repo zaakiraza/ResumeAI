@@ -586,12 +586,14 @@
   }
 }
 
+/* Dark mode support - Commented out to prevent auto dark theme
 @media (prefers-color-scheme: dark) {
   .notification-dropdown,
   .profile-dropdown {
     border-color: var(--color-border-dark);
   }
 }
+*/
 
 /* ===== PRINT STYLES ===== */
 @media print {
