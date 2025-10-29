@@ -14,6 +14,7 @@ import {
   faTimes,
   faCheck,
   faComment,
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../../hooks/useUser";
 import { useNotifications } from "../../../hooks/useNotifications";
@@ -54,6 +55,7 @@ const DashboardNavbar = () => {
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] =
     useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
@@ -85,10 +87,12 @@ const DashboardNavbar = () => {
   useEffect(() => {
     setIsProfileDropdownOpen(false);
     setIsNotificationDropdownOpen(false);
+    setIsMobileMenuOpen(false);
   }, [location]);
 
   const handleNavigation = (path) => {
     navigate(path);
+    setIsMobileMenuOpen(false);
   };
 
   const handleLogout = () => {
@@ -104,6 +108,12 @@ const DashboardNavbar = () => {
   const toggleNotificationDropdown = () => {
     setIsNotificationDropdownOpen(!isNotificationDropdownOpen);
     setIsProfileDropdownOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsProfileDropdownOpen(false);
+    setIsNotificationDropdownOpen(false);
   };
 
   const handleNotificationClick = async (notification) => {
@@ -194,64 +204,131 @@ const DashboardNavbar = () => {
               e.key === "Enter" && handleNavigation("/dashboard")
             }
           />
-          {/* <h1
-            onClick={() => handleNavigation("/dashboard")}
-            tabIndex="0"
-            onKeyDown={(e) =>
-              e.key === "Enter" && handleNavigation("/dashboard")
-            }
-          >
-            ResumeAI
-          </h1> */}
         </div>
 
-        {/* Navigation Items */}
-        <ul className="dashboard-nav-items" role="menubar">
-          <li role="none">
-            <button
-              className={`dashboard-nav-link ${
-                isActiveRoute("/dashboard") ? "active" : ""
-              }`}
-              onClick={() => handleNavigation("/dashboard")}
-              role="menuitem"
-              aria-current={isActiveRoute("/dashboard") ? "page" : undefined}
-            >
-              <FontAwesomeIcon icon={faHome} className="nav-icon" />
-              <span className="nav-text">Home</span>
-            </button>
-          </li>
-          <li role="none">
-            <button
-              className={`dashboard-nav-link ${
-                isActiveRoute("/my-resumes") ? "active" : ""
-              }`}
-              onClick={() => handleNavigation("/my-resumes")}
-              role="menuitem"
-              aria-current={isActiveRoute("/my-resumes") ? "page" : undefined}
-            >
-              <FontAwesomeIcon icon={faFileAlt} className="nav-icon" />
-              <span className="nav-text">My Resumes</span>
-            </button>
-          </li>
-          <li role="none">
-            <button
-              className={`dashboard-nav-link ${
-                isActiveRoute("/ai-tools") ? "active" : ""
-              }`}
-              onClick={() => handleNavigation("/ai-tools")}
-              role="menuitem"
-              aria-current={isActiveRoute("/ai-tools") ? "page" : undefined}
-            >
-              <FontAwesomeIcon icon={faRobot} className="nav-icon" />
-              <span className="nav-text">AI Tools</span>
-            </button>
-          </li>
-        </ul>
+        {/* Mobile Menu Toggle */}
+        <button
+          className="mobile-menu-toggle"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+          aria-expanded={isMobileMenuOpen}
+        >
+          <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />
+        </button>
 
-        {/* Right Section - Notifications & Profile */}
+        {/* Sidebar Menu */}
+        <div className={`sidebar-menu ${isMobileMenuOpen ? "open" : ""}`}>
+          {/* Menu Header */}
+          <div className="sidebar-header">
+            <h3>Menu</h3>
+            <button
+              className="sidebar-close-btn"
+              onClick={toggleMobileMenu}
+              aria-label="Close menu"
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </div>
+
+          {/* Navigation Items */}
+          <ul className="sidebar-nav-items" role="menubar">
+            <li role="none">
+              <button
+                className={`sidebar-nav-link ${
+                  isActiveRoute("/dashboard") ? "active" : ""
+                }`}
+                onClick={() => handleNavigation("/dashboard")}
+                role="menuitem"
+                aria-current={isActiveRoute("/dashboard") ? "page" : undefined}
+              >
+                <FontAwesomeIcon icon={faHome} className="nav-icon" />
+                <span className="nav-text">Home</span>
+              </button>
+            </li>
+            <li role="none">
+              <button
+                className={`sidebar-nav-link ${
+                  isActiveRoute("/my-resumes") ? "active" : ""
+                }`}
+                onClick={() => handleNavigation("/my-resumes")}
+                role="menuitem"
+                aria-current={isActiveRoute("/my-resumes") ? "page" : undefined}
+              >
+                <FontAwesomeIcon icon={faFileAlt} className="nav-icon" />
+                <span className="nav-text">My Resumes</span>
+              </button>
+            </li>
+            <li role="none">
+              <button
+                className={`sidebar-nav-link ${
+                  isActiveRoute("/ai-tools") ? "active" : ""
+                }`}
+                onClick={() => handleNavigation("/ai-tools")}
+                role="menuitem"
+                aria-current={isActiveRoute("/ai-tools") ? "page" : undefined}
+              >
+                <FontAwesomeIcon icon={faRobot} className="nav-icon" />
+                <span className="nav-text">AI Tools</span>
+              </button>
+            </li>
+          </ul>
+
+          {/* Divider */}
+          <hr className="sidebar-divider" />
+
+          {/* Notifications Section */}
+          <div className="sidebar-section">
+            <h4 className="sidebar-section-title">Notifications</h4>
+            <button
+              className="sidebar-item-btn"
+              onClick={() => {
+                navigate("/notifications");
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faBell} className="sidebar-icon" />
+              <span>View Notifications</span>
+              {badgeText && (
+                <span className="sidebar-badge">{badgeText}</span>
+              )}
+            </button>
+          </div>
+
+          {/* Divider */}
+          <hr className="sidebar-divider" />
+
+          {/* Quick Actions */}
+          <div className="sidebar-section">
+            <h4 className="sidebar-section-title">Quick Actions</h4>
+            <button
+              className="sidebar-item-btn"
+              onClick={() => {
+                setIsFeedbackModalOpen(true);
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faComment} className="sidebar-icon" />
+              <span>Send Feedback</span>
+            </button>
+            <button
+              className="sidebar-item-btn"
+              onClick={() => handleNavigation("/helpSupport")}
+            >
+              <FontAwesomeIcon icon={faQuestionCircle} className="sidebar-icon" />
+              <span>Help & Support</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Overlay */}
+        {isMobileMenuOpen && (
+          <div className="sidebar-overlay" onClick={toggleMobileMenu}></div>
+        )}
+
+        {/* Right Section - Profile Only */}
         <div className="dashboard-navbar-right">
-          {/* Notifications */}
-          <div className="notification-container" ref={notificationDropdownRef}>
+          {/* Notifications - Desktop Only */}
+          <div className="notification-container desktop-only" ref={notificationDropdownRef}>
             <button
               className="notification-btn"
               onClick={toggleNotificationDropdown}
@@ -365,9 +442,9 @@ const DashboardNavbar = () => {
             )}
           </div>
 
-          {/* Feedback Button */}
+          {/* Feedback Button - Desktop Only */}
           <button
-            className="feedback-btn"
+            className="feedback-btn desktop-only"
             onClick={() => setIsFeedbackModalOpen(true)}
             aria-label="Send feedback"
             title="Send feedback"

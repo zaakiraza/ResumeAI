@@ -100,6 +100,236 @@
   background-color: var(--color-primary-blue);
 }
 
+/* ===== MOBILE MENU TOGGLE ===== */
+.mobile-menu-toggle {
+  display: flex;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.mobile-menu-toggle:hover {
+  background-color: var(--color-hover-cyan);
+  color: var(--color-primary-blue);
+}
+
+.mobile-menu-toggle:focus {
+  outline: 2px solid var(--color-primary-cyan);
+  outline-offset: 2px;
+}
+
+/* ===== SIDEBAR MENU ===== */
+.sidebar-menu {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 300px;
+  height: 100vh;
+  background: var(--color-bg-primary);
+  box-shadow: 2px 0 12px var(--shadow-medium);
+  transition: left 0.3s ease;
+  z-index: 1100;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.sidebar-menu.open {
+  left: 0;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1099;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border-medium);
+  background: linear-gradient(135deg, var(--color-primary-blue), var(--color-primary-cyan));
+  color: white;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.sidebar-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Sidebar Navigation */
+.sidebar-nav-items {
+  list-style: none;
+  margin: 0;
+  padding: 1rem 0;
+}
+
+.sidebar-nav-items li {
+  margin: 0;
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  width: 100%;
+  border: none;
+  background: none;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav-link:hover {
+  background-color: var(--color-hover-cyan);
+  color: var(--color-primary-blue);
+  border-left-color: var(--color-primary-cyan);
+}
+
+.sidebar-nav-link.active {
+  background-color: var(--color-hover-cyan);
+  color: var(--color-primary-blue);
+  border-left-color: var(--color-primary-blue);
+  font-weight: var(--font-weight-semibold);
+}
+
+.sidebar-nav-link .nav-icon {
+  font-size: 1.2rem;
+  min-width: 24px;
+}
+
+.sidebar-nav-link .nav-text {
+  flex: 1;
+}
+
+/* Sidebar Divider */
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid var(--color-border-medium);
+  margin: 0.5rem 0;
+}
+
+/* Sidebar Section */
+.sidebar-section {
+  padding: 1rem 0;
+}
+
+.sidebar-section-title {
+  padding: 0.5rem 1.5rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1.5rem;
+  width: 100%;
+  border: none;
+  background: none;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+  position: relative;
+}
+
+.sidebar-item-btn:hover {
+  background-color: var(--color-hover-cyan);
+  color: var(--color-primary-blue);
+}
+
+.sidebar-item-btn .sidebar-icon {
+  font-size: 1.1rem;
+  min-width: 24px;
+  color: var(--color-text-muted);
+}
+
+.sidebar-item-btn:hover .sidebar-icon {
+  color: var(--color-primary-blue);
+}
+
+.sidebar-badge {
+  margin-left: auto;
+  background: var(--color-primary-blue);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Desktop Only Elements */
+.desktop-only {
+  display: flex;
+}
+
+/* Hide old navigation items */
+.dashboard-nav-items {
+  display: none;
+}
+
 /* ===== NAVIGATION ICONS ===== */
 .nav-icon {
   font-size: 18px;
@@ -502,19 +732,13 @@
     padding: 0 1.5rem;
   }
 
-  .nav-text {
-    display: none;
+  .dashboard-navbar-right {
+    gap: 0.75rem;
   }
+}
 
-  .dashboard-nav-link {
-    padding: 0.75rem;
-    min-width: 44px;
-    justify-content: center;
-  }
-
-  .profile-name {
-    display: none;
-  }
+@media (max-width: 900px) {
+  /* Keep everything visible on desktop/tablet */
 }
 
 @media (max-width: 768px) {
@@ -524,10 +748,21 @@
 
   .dashboard-logo img {
     font-size: 1.5rem;
+    max-height: 40px;
   }
 
-  .dashboard-nav-items {
-    gap: 0.25rem;
+  /* Hide desktop-only items on mobile */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Show mobile menu toggle */
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .dashboard-navbar-right {
+    gap: 0.5rem;
   }
 
   .notification-dropdown,
@@ -538,6 +773,12 @@
   .notification-dropdown {
     width: 320px;
   }
+
+  /* Adjust sidebar width for tablets */
+  .sidebar-menu {
+    width: 280px;
+    left: -280px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -547,20 +788,52 @@
 
   .dashboard-logo img {
     font-size: 1.3rem;
+    max-width: 100px;
+    max-height: 35px;
   }
 
   .dashboard-navbar-right {
-    gap: 0.5rem;
+    gap: 0.25rem;
+  }
+
+  .profile-info {
+    display: none;
+  }
+
+  .profile-btn {
+    padding: 0;
+  }
+
+  .profile-avatar {
+    width: 36px;
+    height: 36px;
   }
 
   .notification-dropdown,
   .profile-dropdown {
     min-width: 260px;
-    right: -1rem;
+    right: 0;
+    left: auto;
   }
 
   .notification-dropdown {
-    width: 300px;
+    width: calc(100vw - 2rem);
+    max-width: 300px;
+  }
+
+  .profile-dropdown {
+    width: 260px;
+  }
+
+  /* Adjust sidebar for small screens */
+  .sidebar-menu {
+    width: 280px;
+    left: -280px;
+  }
+
+  .sidebar-menu.open {
+    width: 100%;
+    max-width: 280px;
   }
 }
 
