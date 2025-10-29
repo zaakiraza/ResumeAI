@@ -24,7 +24,7 @@ const DashboardNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, loading: userLoading } = useUser();
-  console.log(user);
+  // console.log(user);
   const {
     notifications,
     unreadCount,
@@ -174,7 +174,7 @@ const DashboardNavbar = () => {
     return user?.profilePicture || null;
   };
 
-  console.log(badgeText);
+  // console.log(badgeText);
 
   return (
     <nav
@@ -185,7 +185,16 @@ const DashboardNavbar = () => {
       <div className="dashboard-navbar-container">
         {/* Logo Section */}
         <div className="dashboard-logo">
-          <h1
+          <img
+            src="/logo1.png"
+            alt="Logo"
+            onClick={() => handleNavigation("/dashboard")}
+            tabIndex="0"
+            onKeyDown={(e) =>
+              e.key === "Enter" && handleNavigation("/dashboard")
+            }
+          />
+          {/* <h1
             onClick={() => handleNavigation("/dashboard")}
             tabIndex="0"
             onKeyDown={(e) =>
@@ -193,7 +202,7 @@ const DashboardNavbar = () => {
             }
           >
             ResumeAI
-          </h1>
+          </h1> */}
         </div>
 
         {/* Navigation Items */}

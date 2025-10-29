@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSave, FaDownload, FaFileAlt, FaTimes, FaCheck } from 'react-icons/fa';
+import { FaArrowLeft, FaSave, FaDownload, FaFileAlt, FaTimes, FaCheck, FaGlobe, FaTrash, FaPlus } from 'react-icons/fa';
 import { useResume } from '../../../hooks/useResume';
 import './EditResume.css';
 
@@ -48,6 +48,7 @@ const EditResume = () => {
         phone: resume.personalInfo?.phone || '',
         location: resume.personalInfo?.location || '',
         profilePicture: resume.personalInfo?.profilePicture || '',
+        links: resume.personalInfo?.links || [{ label: '', url: '' }],
         
         // Map any other nested fields
         // Example: additionalInfo fields if needed
@@ -118,7 +119,8 @@ const EditResume = () => {
           email: formData.email || '',
           phone: formData.phone || '',
           location: formData.location || '',
-          profilePicture: formData.profilePicture || ''
+          profilePicture: formData.profilePicture || '',
+          links: formData.links?.filter(link => link.label && link.url) || [],
         },
         additionalInfo: {
           volunteerExperience: formData.volunteerExperience || '',
@@ -133,6 +135,7 @@ const EditResume = () => {
       delete apiData.phone;
       delete apiData.location;
       delete apiData.profilePicture;
+      delete apiData.links;
       delete apiData.volunteerExperience;
       delete apiData.hobbies;
       delete apiData.projects;
@@ -283,12 +286,12 @@ const EditResume = () => {
         >
           Preview & Template
         </button>
-        <button
+        {/* <button
           className={`edit-resume-tab ${activeTab === 'debug' ? 'active' : ''}`}
           onClick={() => setActiveTab('debug')}
         >
           Debug Data
-        </button>
+        </button> */}
       </div>
 
       {/* Content Area */}
@@ -347,7 +350,7 @@ const EditResume = () => {
                 />
               </div>
               
-              <div className="edit-resume-form-group">
+              {/* <div className="edit-resume-form-group">
                 <label>LinkedIn URL</label>
                 <input
                   type="url"
@@ -355,7 +358,61 @@ const EditResume = () => {
                   onChange={(e) => handleInputChange('linkedin', e.target.value)}
                   placeholder="https://linkedin.com/in/johndoe"
                 />
-              </div>
+              </div> */}
+            </div>
+            
+            {/* Professional Links Section */}
+            <div className="edit-resume-form-group full-width">
+              <label>
+                <FaGlobe style={{ marginRight: '8px' }} />
+                Professional Links (LinkedIn, Portfolio, GitHub, etc.)
+              </label>
+              <p className="edit-resume-field-hint">
+                Add links to your professional profiles and portfolios
+              </p>
+              {formData.links && formData.links.map((link, index) => (
+                <div key={index} className="edit-resume-link-item">
+                  <div className="edit-resume-form-grid">
+                    <div className="edit-resume-form-group">
+                      <input
+                        type="text"
+                        value={link.label || ''}
+                        onChange={(e) =>
+                          handleArrayInputChange('links', index, 'label', e.target.value)
+                        }
+                        placeholder="Label (e.g., LinkedIn, Portfolio, GitHub)"
+                      />
+                    </div>
+                    <div className="edit-resume-form-group">
+                      <input
+                        type="url"
+                        value={link.url || ''}
+                        onChange={(e) =>
+                          handleArrayInputChange('links', index, 'url', e.target.value)
+                        }
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                  </div>
+                  {formData.links.length > 1 && (
+                    <button
+                      type="button"
+                      className="edit-resume-remove-link-btn"
+                      onClick={() => removeArrayItem('links', index)}
+                      title="Remove link"
+                    >
+                      <FaTrash />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                className="edit-resume-add-link-btn"
+                onClick={() => addArrayItem('links', { label: '', url: '' })}
+              >
+                <FaPlus /> Add Another Link
+              </button>
             </div>
             
             <div className="edit-resume-form-group full-width">
@@ -886,7 +943,7 @@ const EditResume = () => {
           </div>
         )}
 
-        {activeTab === 'debug' && (
+        {/* {activeTab === 'debug' && (
           <div className="edit-resume-section">
             <h2>Debug Data</h2>
             <p>This section shows the raw data structure to help debug form issues.</p>
@@ -905,126 +962,538 @@ const EditResume = () => {
               </pre>
             </div>
           </div>
-        )}
+        )} */}
 
         {activeTab === 'preview' && (
           <div className="edit-resume-section">
-            <h2>Preview & Template</h2>
+            <h2>Choose Your Template</h2>
             <p className="edit-resume-section-description">
-              Preview how your resume will look and select a template style.
+              Select a template style and preview how your resume will look.
             </p>
 
             <div className="edit-resume-template-selection">
-              <h3>Choose Template</h3>
               <div className="edit-resume-template-grid">
-                {['modern', 'classic', 'creative', 'minimal'].map((template) => (
-                  <div
-                    key={template}
-                    className={`edit-resume-template-card ${
-                      formData.selectedTemplate === template ? 'selected' : ''
-                    }`}
-                    onClick={() => handleInputChange('selectedTemplate', template)}
-                  >
-                    <div className="edit-resume-template-preview">
-                      <FaFileAlt />
+                {/* Modern Template */}
+                <div
+                  className={`edit-resume-template-card ${
+                    (formData.selectedTemplate || formData.template || 'modern') === 'modern' ? 'selected' : ''
+                  }`}
+                  onClick={() => handleInputChange('selectedTemplate', 'modern')}
+                >
+                  <div className="edit-resume-template-visual modern">
+                    <div className="template-visual-header gradient"></div>
+                    <div className="template-visual-body">
+                      <div className="template-visual-line"></div>
+                      <div className="template-visual-line short"></div>
+                      <div className="template-visual-section">
+                        <div className="template-visual-line"></div>
+                        <div className="template-visual-line"></div>
+                      </div>
                     </div>
-                    <h4>{template.charAt(0).toUpperCase() + template.slice(1)}</h4>
-                    <p>
-                      {template === 'modern'
-                        ? 'Clean and professional design'
-                        : template === 'classic'
-                        ? 'Traditional resume format'
-                        : template === 'creative'
-                        ? 'Bold and eye-catching style'
-                        : 'Simple and minimalist layout'}
-                    </p>
                   </div>
-                ))}
+                  <h4>Modern</h4>
+                  <p>Clean design with gradient header</p>
+                  {(formData.selectedTemplate || formData.template || 'modern') === 'modern' && (
+                    <div className="template-selected-badge">
+                      <FaCheck /> Selected
+                    </div>
+                  )}
+                </div>
+
+                {/* Classic Template */}
+                <div
+                  className={`edit-resume-template-card ${
+                    (formData.selectedTemplate || formData.template) === 'classic' ? 'selected' : ''
+                  }`}
+                  onClick={() => handleInputChange('selectedTemplate', 'classic')}
+                >
+                  <div className="edit-resume-template-visual classic">
+                    <div className="template-visual-header bordered"></div>
+                    <div className="template-visual-body">
+                      <div className="template-visual-line"></div>
+                      <div className="template-visual-line short"></div>
+                      <div className="template-visual-section">
+                        <div className="template-visual-line"></div>
+                        <div className="template-visual-line"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <h4>Classic</h4>
+                  <p>Traditional professional format</p>
+                  {(formData.selectedTemplate || formData.template) === 'classic' && (
+                    <div className="template-selected-badge">
+                      <FaCheck /> Selected
+                    </div>
+                  )}
+                </div>
+
+                {/* Creative Template */}
+                <div
+                  className={`edit-resume-template-card ${
+                    (formData.selectedTemplate || formData.template) === 'creative' ? 'selected' : ''
+                  }`}
+                  onClick={() => handleInputChange('selectedTemplate', 'creative')}
+                >
+                  <div className="edit-resume-template-visual creative">
+                    <div className="template-visual-sidebar gradient"></div>
+                    <div className="template-visual-main">
+                      <div className="template-visual-line"></div>
+                      <div className="template-visual-line short"></div>
+                      <div className="template-visual-section">
+                        <div className="template-visual-line"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <h4>Creative</h4>
+                  <p>Eye-catching sidebar layout</p>
+                  {(formData.selectedTemplate || formData.template) === 'creative' && (
+                    <div className="template-selected-badge">
+                      <FaCheck /> Selected
+                    </div>
+                  )}
+                </div>
+
+                {/* Minimal Template */}
+                <div
+                  className={`edit-resume-template-card ${
+                    (formData.selectedTemplate || formData.template) === 'minimal' ? 'selected' : ''
+                  }`}
+                  onClick={() => handleInputChange('selectedTemplate', 'minimal')}
+                >
+                  <div className="edit-resume-template-visual minimal">
+                    <div className="template-visual-header simple"></div>
+                    <div className="template-visual-body">
+                      <div className="template-visual-line"></div>
+                      <div className="template-visual-line short"></div>
+                      <div className="template-visual-section">
+                        <div className="template-visual-line"></div>
+                        <div className="template-visual-line"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <h4>Minimal</h4>
+                  <p>Clean and simple design</p>
+                  {(formData.selectedTemplate || formData.template) === 'minimal' && (
+                    <div className="template-selected-badge">
+                      <FaCheck /> Selected
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             <div className="edit-resume-preview-container">
-              <h3>Resume Preview</h3>
-              <div className="edit-resume-preview">
-                <div className="edit-resume-preview-header">
-                  <h2>{formData.fullName || 'Your Name'}</h2>
-                  <p className="edit-resume-preview-title">
-                    {formData.jobTitle || 'Professional Title'}
-                  </p>
-                </div>
+              <h2>Preview with Your Data</h2>
+              
+              {/* Template Selector Dropdown */}
+              <div className="edit-resume-template-selector">
+                <label>Current Template:</label>
+                <select
+                  className="template-selector-dropdown"
+                  value={formData.selectedTemplate || formData.template || 'modern'}
+                  onChange={(e) => handleInputChange('selectedTemplate', e.target.value)}
+                >
+                  <option value="modern">Modern</option>
+                  <option value="classic">Classic</option>
+                  <option value="creative">Creative</option>
+                  <option value="minimal">Minimal</option>
+                </select>
+              </div>
 
-                <div className="edit-resume-preview-contact">
-                  {formData.email && <span>{formData.email}</span>}
-                  {formData.phone && <span>{formData.phone}</span>}
-                  {formData.location && <span>{formData.location}</span>}
-                  {formData.linkedin && <span>{formData.linkedin}</span>}
-                </div>
+              {/* Render selected template with real data */}
+              <div className="edit-resume-full-preview">
+                {/* Modern Template */}
+                {(formData.selectedTemplate || formData.template || 'modern') === 'modern' && (
+                  <div className="resume-template-modern">
+                    <div className="modern-header">
+                      <div className="template-name">{formData.fullName || 'Your Name'}</div>
+                      <div className="template-contact">
+                        {formData.title && <span>{formData.title}</span>}
+                        {formData.email && <span> | {formData.email}</span>}
+                        {formData.phone && <span> | {formData.phone}</span>}
+                        {formData.location && <span> | {formData.location}</span>}
+                      </div>
+                      {formData.links && formData.links.some(link => link.label && link.url) && (
+                        <div className="template-links">
+                          {formData.links.map((link, idx) => 
+                            link.label && link.url ? (
+                              <span key={idx}>{link.label} | </span>
+                            ) : null
+                          )}
+                        </div>
+                      )}
+                    </div>
 
-                {formData.careerObjective && (
-                  <div className="edit-resume-preview-section">
-                    <h3>Professional Summary</h3>
-                    <p>{formData.careerObjective}</p>
+                    {formData.careerObjective && (
+                      <div className="template-section">
+                        <h3 className="section-title">Professional Summary</h3>
+                        <p>{formData.careerObjective}</p>
+                      </div>
+                    )}
+
+                    {formData.workExperience && formData.workExperience.length > 0 && formData.workExperience[0].jobTitle && (
+                      <div className="template-section">
+                        <h3 className="section-title">Work Experience</h3>
+                        {formData.workExperience.map((exp, idx) => (
+                          exp.jobTitle && (
+                            <div key={idx} className="template-item">
+                              <div className="item-header">{exp.jobTitle} - {exp.companyName}</div>
+                              <div className="item-date">
+                                {exp.startDate} - {exp.currentJob ? 'Present' : exp.endDate || 'Present'}
+                              </div>
+                              {exp.responsibilities && <p>{exp.responsibilities}</p>}
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.skills && formData.skills.length > 0 && (
+                      <div className="template-section">
+                        <h3 className="section-title">Skills</h3>
+                        <div className="template-skills">
+                          {formData.skills.map((skill, idx) => (
+                            <span key={idx} className="skill-tag">{skill}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.education && formData.education.length > 0 && formData.education[0].degree && (
+                      <div className="template-section">
+                        <h3 className="section-title">Education</h3>
+                        {formData.education.map((edu, idx) => (
+                          edu.degree && (
+                            <div key={idx} className="template-item">
+                              <div className="item-header">{edu.degree}</div>
+                              <div className="item-date">{edu.institution} | {edu.graduationYear}</div>
+                              {edu.gpa && <p>GPA: {edu.gpa}</p>}
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.certifications && formData.certifications.length > 0 && formData.certifications[0].name && (
+                      <div className="template-section">
+                        <h3 className="section-title">Certifications</h3>
+                        {formData.certifications.map((cert, idx) => (
+                          cert.name && (
+                            <div key={idx} className="template-item">
+                              <div className="item-header">{cert.name}</div>
+                              <div className="item-date">{cert.institution} | {cert.dateAchieved}</div>
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.languages && formData.languages.length > 0 && formData.languages[0].name && (
+                      <div className="template-section">
+                        <h3 className="section-title">Languages</h3>
+                        <div className="template-languages">
+                          {formData.languages.map((lang, idx) => (
+                            lang.name && <span key={idx}>{lang.name} ({lang.proficiency}) </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                <div className="edit-resume-preview-section">
-                  <h3>Experience</h3>
-                  {formData.workExperience &&
-                    formData.workExperience.map(
-                      (exp, index) =>
-                        exp.jobTitle && (
-                          <div key={index} className="edit-resume-preview-item">
-                            <div className="edit-resume-preview-item-header">
-                              <h4>{exp.jobTitle}</h4>
-                              <p>{exp.companyName}</p>
-                            </div>
-                            <p className="edit-resume-preview-date">
-                              {exp.startDate} - {exp.currentJob ? 'Present' : exp.endDate}
-                            </p>
-                            {exp.responsibilities && <p>{exp.responsibilities}</p>}
-                          </div>
-                        )
-                    )}
-                </div>
+                {/* Classic Template */}
+                {(formData.selectedTemplate || formData.template) === 'classic' && (
+                  <div className="resume-template-classic">
+                    <div className="classic-header">
+                      <div className="template-name">{formData.fullName || 'Your Name'}</div>
+                      <div className="template-contact-classic">
+                        {formData.title && <div>{formData.title}</div>}
+                        {formData.email && <div>{formData.email}</div>}
+                        {formData.phone && <div>{formData.phone}</div>}
+                        {formData.location && <div>{formData.location}</div>}
+                        {formData.links && formData.links.map((link, idx) => 
+                          link.label && link.url ? <div key={idx}>{link.label}</div> : null
+                        )}
+                      </div>
+                    </div>
 
-                <div className="edit-resume-preview-section">
-                  <h3>Education</h3>
-                  {formData.education &&
-                    formData.education.map(
-                      (edu, index) =>
-                        edu.degree && (
-                          <div key={index} className="edit-resume-preview-item">
-                            <div className="edit-resume-preview-item-header">
-                              <h4>{edu.degree}</h4>
-                              <p>{edu.institution}</p>
-                            </div>
-                            <p className="edit-resume-preview-date">{edu.graduationYear}</p>
-                            {edu.gpa && <p>GPA: {edu.gpa}</p>}
-                          </div>
-                        )
+                    {formData.careerObjective && (
+                      <div className="classic-section">
+                        <h3 className="section-title-classic">Professional Summary</h3>
+                        <p>{formData.careerObjective}</p>
+                      </div>
                     )}
-                </div>
 
-                {formData.skills && formData.skills.length > 0 && (
-                  <div className="edit-resume-preview-section">
-                    <h3>Skills</h3>
-                    <div className="edit-resume-preview-skills">
-                      {formData.skills.map((skill, index) => (
-                        <span key={index} className="edit-resume-preview-skill">
-                          {skill}
-                        </span>
-                      ))}
+                    {formData.workExperience && formData.workExperience.length > 0 && formData.workExperience[0].jobTitle && (
+                      <div className="classic-section">
+                        <h3 className="section-title-classic">Work Experience</h3>
+                        {formData.workExperience.map((exp, idx) => (
+                          exp.jobTitle && (
+                            <div key={idx} className="classic-item">
+                              <strong>{exp.jobTitle}</strong> - {exp.companyName}
+                              <div className="classic-date">
+                                {exp.startDate} - {exp.currentJob ? 'Present' : exp.endDate || 'Present'}
+                              </div>
+                              {exp.responsibilities && <p>{exp.responsibilities}</p>}
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.education && formData.education.length > 0 && formData.education[0].degree && (
+                      <div className="classic-section">
+                        <h3 className="section-title-classic">Education</h3>
+                        {formData.education.map((edu, idx) => (
+                          edu.degree && (
+                            <div key={idx} className="classic-item">
+                              <strong>{edu.degree}</strong>
+                              <div>{edu.institution}, {edu.graduationYear}</div>
+                              {edu.gpa && <div>GPA: {edu.gpa}</div>}
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.skills && formData.skills.length > 0 && (
+                      <div className="classic-section">
+                        <h3 className="section-title-classic">Skills</h3>
+                        <p>{formData.skills.join(', ')}</p>
+                      </div>
+                    )}
+
+                    {formData.certifications && formData.certifications.length > 0 && formData.certifications[0].name && (
+                      <div className="classic-section">
+                        <h3 className="section-title-classic">Certifications</h3>
+                        {formData.certifications.map((cert, idx) => (
+                          cert.name && (
+                            <div key={idx} className="classic-item">
+                              <strong>{cert.name}</strong> - {cert.institution} ({cert.dateAchieved})
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.languages && formData.languages.length > 0 && formData.languages[0].name && (
+                      <div className="classic-section">
+                        <h3 className="section-title-classic">Languages</h3>
+                        <div className="template-languages">
+                          {formData.languages.map((lang, idx) => (
+                            lang.name && <span key={idx}>{lang.name} ({lang.proficiency}) </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Creative Template */}
+                {(formData.selectedTemplate || formData.template) === 'creative' && (
+                  <div className="resume-template-creative">
+                    <div className="creative-sidebar">
+                      <div className="sidebar-name">{formData.fullName || 'Your Name'}</div>
+                      
+                      <div className="sidebar-section">
+                        <h4>Contact</h4>
+                        {formData.email && <p>{formData.email}</p>}
+                        {formData.phone && <p>{formData.phone}</p>}
+                        {formData.location && <p>{formData.location}</p>}
+                      </div>
+
+                      {formData.links && formData.links.some(link => link.label && link.url) && (
+                        <div className="sidebar-section">
+                          <h4>Links</h4>
+                          {formData.links.map((link, idx) => 
+                            link.label && link.url ? <p key={idx}>{link.label}</p> : null
+                          )}
+                        </div>
+                      )}
+
+                      {formData.skills && formData.skills.length > 0 && (
+                        <div className="sidebar-section">
+                          <h4>Skills</h4>
+                          {formData.skills.map((skill, idx) => (
+                            <p key={idx}>• {skill}</p>
+                          ))}
+                        </div>
+                      )}
+
+                      {formData.languages && formData.languages.length > 0 && formData.languages[0].name && (
+                        <div className="sidebar-section">
+                          <h4>Languages</h4>
+                          {formData.languages.map((lang, idx) => (
+                            lang.name && <p key={idx}>{lang.name} - {lang.proficiency}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="creative-main">
+                      {formData.title && (
+                        <div style={{marginBottom: '1.5rem'}}>
+                          <h2 style={{color: '#2563EB', fontSize: '1.5rem', marginBottom: '0.5rem'}}>{formData.title}</h2>
+                        </div>
+                      )}
+
+                      {formData.careerObjective && (
+                        <div className="creative-section">
+                          <h3 className="creative-title">About Me</h3>
+                          <p>{formData.careerObjective}</p>
+                        </div>
+                      )}
+
+                      {formData.workExperience && formData.workExperience.length > 0 && formData.workExperience[0].jobTitle && (
+                        <div className="creative-section">
+                          <h3 className="creative-title">Experience</h3>
+                          {formData.workExperience.map((exp, idx) => (
+                            exp.jobTitle && (
+                              <div key={idx} className="creative-item">
+                                <h4>{exp.jobTitle}</h4>
+                                <div className="creative-company">
+                                  {exp.companyName} | {exp.startDate} - {exp.currentJob ? 'Present' : exp.endDate || 'Present'}
+                                </div>
+                                {exp.responsibilities && <p>{exp.responsibilities}</p>}
+                              </div>
+                            )
+                          ))}
+                        </div>
+                      )}
+
+                      {formData.education && formData.education.length > 0 && formData.education[0].degree && (
+                        <div className="creative-section">
+                          <h3 className="creative-title">Education</h3>
+                          {formData.education.map((edu, idx) => (
+                            edu.degree && (
+                              <div key={idx} className="creative-item">
+                                <h4>{edu.degree}</h4>
+                                <div className="creative-company">
+                                  {edu.institution} | {edu.graduationYear}
+                                  {edu.gpa && ` | GPA: ${edu.gpa}`}
+                                </div>
+                              </div>
+                            )
+                          ))}
+                        </div>
+                      )}
+
+                      {formData.certifications && formData.certifications.length > 0 && formData.certifications[0].name && (
+                        <div className="creative-section">
+                          <h3 className="creative-title">Certifications</h3>
+                          {formData.certifications.map((cert, idx) => (
+                            cert.name && (
+                              <div key={idx} className="creative-item">
+                                <h4>{cert.name}</h4>
+                                <div className="creative-company">
+                                  {cert.institution} | {cert.dateAchieved}
+                                </div>
+                              </div>
+                            )
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {/* Additional sections (collapsed for preview) */}
-                {(formData.certifications?.length > 0 ||
-                  formData.languages?.length > 0 ||
-                  formData.projects ||
-                  formData.volunteerExperience) && (
-                  <div className="edit-resume-preview-additional">
-                    <p>+ Additional sections included (certifications, languages, projects, etc.)</p>
+                {/* Minimal Template */}
+                {(formData.selectedTemplate || formData.template) === 'minimal' && (
+                  <div className="resume-template-minimal">
+                    <div className="minimal-header">
+                      <div className="minimal-name">{formData.fullName || 'Your Name'}</div>
+                      <div className="minimal-contact">
+                        {formData.title && <span>{formData.title}</span>}
+                        {formData.email && <span> • {formData.email}</span>}
+                        {formData.phone && <span> • {formData.phone}</span>}
+                        {formData.location && <span> • {formData.location}</span>}
+                        {formData.links && formData.links.map((link, idx) => 
+                          link.label && link.url ? <span key={idx}> • {link.label}</span> : null
+                        )}
+                      </div>
+                    </div>
+
+                    {formData.careerObjective && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Summary</h3>
+                        <p className="minimal-summary">{formData.careerObjective}</p>
+                      </div>
+                    )}
+
+                    {formData.workExperience && formData.workExperience.length > 0 && formData.workExperience[0].jobTitle && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Experience</h3>
+                        {formData.workExperience.map((exp, idx) => (
+                          exp.jobTitle && (
+                            <div key={idx} className="minimal-item">
+                              <div className="minimal-item-header">
+                                <span className="minimal-job">{exp.jobTitle}</span>
+                                <span className="minimal-date">
+                                  {exp.startDate} - {exp.currentJob ? 'Present' : exp.endDate || 'Present'}
+                                </span>
+                              </div>
+                              <div className="minimal-company">{exp.companyName}</div>
+                              {exp.responsibilities && <p>{exp.responsibilities}</p>}
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.education && formData.education.length > 0 && formData.education[0].degree && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Education</h3>
+                        {formData.education.map((edu, idx) => (
+                          edu.degree && (
+                            <div key={idx} className="minimal-item">
+                              <div className="minimal-item-header">
+                                <span className="minimal-job">{edu.degree}</span>
+                                <span className="minimal-date">{edu.graduationYear}</span>
+                              </div>
+                              <div className="minimal-company">
+                                {edu.institution}
+                                {edu.gpa && ` • GPA: ${edu.gpa}`}
+                              </div>
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.skills && formData.skills.length > 0 && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Skills</h3>
+                        <p>{formData.skills.join(' • ')}</p>
+                      </div>
+                    )}
+
+                    {formData.certifications && formData.certifications.length > 0 && formData.certifications[0].name && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Certifications</h3>
+                        {formData.certifications.map((cert, idx) => (
+                          cert.name && (
+                            <div key={idx} className="minimal-item">
+                              <div className="minimal-item-header">
+                                <span className="minimal-job">{cert.name}</span>
+                                <span className="minimal-date">{cert.dateAchieved}</span>
+                              </div>
+                              <div className="minimal-company">{cert.institution}</div>
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {formData.languages && formData.languages.length > 0 && formData.languages[0].name && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Languages</h3>
+                        <div className="template-languages">
+                          {formData.languages.map((lang, idx) => (
+                            lang.name && <span key={idx}>{lang.name} ({lang.proficiency}) </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -1035,12 +1504,6 @@ const EditResume = () => {
                   onClick={() => handleDownload('pdf')}
                 >
                   <FaDownload /> Download PDF
-                </button>
-                <button
-                  className="edit-resume-download-btn word"
-                  onClick={() => handleDownload('word')}
-                >
-                  <FaDownload /> Download Word
                 </button>
               </div>
             </div>

@@ -26,6 +26,12 @@ const resumeSchema = new mongoose.Schema(
       phone: { type: String },
       location: { type: String },
       profilePicture: { type: String }, // URL to image
+      links: [
+        {
+          label: { type: String },
+          url: { type: String },
+        },
+      ],
     },
 
     // Career Summary

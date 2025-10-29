@@ -1,9 +1,38 @@
 import Resume from "../models/resume.js";
 import User from "../models/user.js";
+import Skill from "../models/skill.js";
 import { successResponse, errorResponse } from "../utils/responseHandler.js";
 import PDFService from "../utils/pdfService.js";
 import NotificationService from "../utils/notificationService.js";
 import AchievementService from "../utils/achievementService.js";
+
+// Helper function to add/update skills in the database
+const processSkills = async (skills, userId) => {
+  if (!Array.isArray(skills) || skills.length === 0) return;
+
+  for (const skillName of skills) {
+    if (!skillName || skillName.trim() === "") continue;
+
+    const normalizedName = skillName.trim().toLowerCase();
+    const displayName = skillName.trim();
+
+    let skill = await Skill.findOne({ name: normalizedName });
+
+    if (skill) {
+      // Increment usage count
+      await skill.incrementUsage();
+    } else {
+      // Create new skill
+      await Skill.create({
+        name: normalizedName,
+        displayName: displayName,
+        category: "other",
+        usageCount: 1,
+        addedBy: userId,
+      });
+    }
+  }
+};
 
 // Create a new resume
 export const createResume = async (req, res) => {
@@ -19,6 +48,11 @@ export const createResume = async (req, res) => {
     });
 
     const savedResume = await newResume.save();
+
+    // Process skills and add/update them in the skills database
+    if (resumeData.skills && Array.isArray(resumeData.skills)) {
+      await processSkills(resumeData.skills, userId);
+    }
 
     // Update user's resume array with metadata
     await User.findByIdAndUpdate(userId, {
@@ -196,6 +230,11 @@ export const updateResume = async (req, res) => {
     resume.lastModified = new Date();
 
     const updatedResume = await resume.save();
+
+    // Process skills and add/update them in the skills database
+    if (updateData.skills && Array.isArray(updateData.skills)) {
+      await processSkills(updateData.skills, userId);
+    }
 
     // Update corresponding entry in user's resumes array
     await User.updateOne(

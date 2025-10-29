@@ -69,8 +69,9 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="footer-brand">
             <div className="brand-logo">
-              <h3 className="brand-name">ResumeAI</h3>
-              <span className="brand-icon">🚀</span>
+              {/* <h3 className="brand-name">ResumeAI</h3> */}
+              <img src="/logo.png" alt="logo" />
+              {/* <span className="brand-icon">🚀</span> */}
             </div>
             <p className="brand-tagline">
               Create Professional Resumes in Minutes with AI

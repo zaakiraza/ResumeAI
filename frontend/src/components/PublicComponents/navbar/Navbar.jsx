@@ -62,8 +62,8 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="logo">
-        {/* <img src="/logo.png" alt="" /> */}
-        <h1 onClick={() => handleNavClick("/")}>ResumeAI</h1>
+        <img src="/logo.png" alt="logo" onClick={() => handleNavClick("/")} />
+        {/* <h1 onClick={() => handleNavClick("/")}>ResumeAI</h1> */}
       </div>
 
       {/* Hamburger Menu Button */}

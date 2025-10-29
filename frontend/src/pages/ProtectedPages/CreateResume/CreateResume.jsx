@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useResume, useTemplates } from "../../../hooks/useResume";
+import { useSkills } from "../../../hooks/useSkills";
 import {
   FaUser,
   FaPen,
@@ -62,6 +63,13 @@ const CreateResume = () => {
     downloadPDF,
   } = useResume(resumeId);
   const { templates, loading: templatesLoading } = useTemplates();
+  const {
+    suggestions,
+    popularSkills,
+    loading: skillsLoading,
+    fetchPopularSkills,
+    debouncedSearch,
+  } = useSkills();
   const [currentStep, setCurrentStep] = useState(1);
   const [resumeTitle, setResumeTitle] = useState("My Resume");
   const [stepStatus, setStepStatus] = useState({
@@ -85,6 +93,12 @@ const CreateResume = () => {
     phone: "",
     location: "",
     profilePicture: "",
+    links: [
+      {
+        label: "",
+        url: "",
+      },
+    ],
 
     // Career Summary
     careerObjective: "",
@@ -153,6 +167,9 @@ const CreateResume = () => {
         phone: resume.personalInfo?.phone || "",
         location: resume.personalInfo?.location || "",
         profilePicture: resume.personalInfo?.profilePicture || "",
+        links: resume.personalInfo?.links?.length
+          ? resume.personalInfo.links
+          : [{ label: "", url: "" }],
         careerObjective: resume.careerObjective || "",
         workExperience: resume.workExperience?.length
           ? resume.workExperience
@@ -204,6 +221,11 @@ const CreateResume = () => {
       setResumeTitle(resume.title || "My Resume");
     }
   }, [resume]);
+
+  // Fetch popular skills when component mounts
+  useEffect(() => {
+    fetchPopularSkills(30); // Get top 30 popular skills
+  }, [fetchPopularSkills]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -407,6 +429,7 @@ const CreateResume = () => {
         phone: formData.phone,
         location: formData.location,
         profilePicture: formData.profilePicture,
+        links: formData.links.filter((link) => link.label && link.url),
       },
       careerObjective: formData.careerObjective,
       workExperience: formData.workExperience.filter(
@@ -585,6 +608,61 @@ const CreateResume = () => {
                   }
                   placeholder="City, Country"
                 />
+              </div>
+
+              {/* Links Section */}
+              <div className="create-resume-form-group create-resume-full-width">
+                <label>
+                  <FaGlobe style={{ marginRight: "8px" }} />
+                  Professional Links (LinkedIn, Portfolio, GitHub, etc.)
+                </label>
+                {formData.links.map((link, index) => (
+                  <div key={index} className="create-resume-array-item">
+                    <div className="create-resume-form-grid">
+                      <div className="create-resume-form-group">
+                        <input
+                          type="text"
+                          value={link.label}
+                          onChange={(e) =>
+                            handleArrayInputChange("links", index, "label", e.target.value)
+                          }
+                          placeholder="Label (e.g., LinkedIn, Portfolio, GitHub)"
+                        />
+                      </div>
+                      <div className="create-resume-form-group">
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={(e) =>
+                            handleArrayInputChange("links", index, "url", e.target.value)
+                          }
+                          placeholder="https://linkedin.com/in/yourprofile"
+                        />
+                      </div>
+                    </div>
+                    {formData.links.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeArrayItem("links", index)}
+                        className="create-resume-remove-btn"
+                      >
+                        <FaMinus /> Remove Link
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    addArrayItem("links", { label: "", url: "" })
+                  }
+                  className="create-resume-add-btn"
+                >
+                  <FaPlus /> Add Another Link
+                </button>
+                <p className="create-resume-help-text">
+                  Add your LinkedIn, portfolio, GitHub, personal website, or other professional profiles
+                </p>
               </div>
 
               <div className="create-resume-form-group create-resume-full-width">
@@ -868,9 +946,14 @@ const CreateResume = () => {
                 <input
                   type="text"
                   value={formData.skillInput}
-                  onChange={(e) =>
-                    handleInputChange("skillInput", e.target.value)
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    handleInputChange("skillInput", value);
+                    // Fetch suggestions as user types
+                    if (value.trim().length >= 2) {
+                      debouncedSearch(value.trim());
+                    }
+                  }}
                   placeholder="Type a skill and press Enter"
                   onKeyPress={(e) => {
                     if (e.key === "Enter") {
@@ -887,6 +970,26 @@ const CreateResume = () => {
                   Add
                 </button>
               </div>
+              {/* Display live suggestions */}
+              {formData.skillInput.trim().length >= 2 && suggestions.length > 0 && (
+                <div className="create-resume-skill-autocomplete">
+                  {suggestions.slice(0, 8).map((skill) => (
+                    <div
+                      key={skill._id}
+                      className="create-resume-suggestion-item"
+                      onClick={() => {
+                        addSkill(skill.displayName);
+                        handleInputChange("skillInput", "");
+                      }}
+                    >
+                      <span>{skill.displayName}</span>
+                      {skill.usageCount > 10 && (
+                        <span className="popular-badge">Popular</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
               {errors.skills && (
                 <span className="error-message">{errors.skills}</span>
               )}
@@ -908,51 +1011,22 @@ const CreateResume = () => {
             </div>
 
             <div className="create-resume-skill-categories">
-              <h4>Popular Skills by Category:</h4>
-              <div className="create-resume-skill-category">
-                <h5>Technical Skills</h5>
+              <h4>Popular Skills {skillsLoading && "(Loading...)"}</h4>
+              {popularSkills.length > 0 && (
                 <div className="create-resume-skill-suggestions">
-                  {[
-                    "JavaScript",
-                    "Python",
-                    "React",
-                    "Node.js",
-                    "SQL",
-                    "Git",
-                  ].map((skill) => (
+                  {popularSkills.slice(0, 20).map((skill) => (
                     <button
-                      key={skill}
+                      key={skill._id}
                       type="button"
                       className="create-resume-skill-suggestion"
-                      onClick={() => addSkill(skill)}
+                      onClick={() => addSkill(skill.displayName)}
                     >
-                      + {skill}
+                      + {skill.displayName}
+                      {skill.usageCount > 50 && <span className="fire-emoji"> 🔥</span>}
                     </button>
                   ))}
                 </div>
-              </div>
-              <div className="create-resume-skill-category">
-                <h5>Soft Skills</h5>
-                <div className="create-resume-skill-suggestions">
-                  {[
-                    "Leadership",
-                    "Communication",
-                    "Problem Solving",
-                    "Teamwork",
-                    "Project Management",
-                    "Time Management",
-                  ].map((skill) => (
-                    <button
-                      key={skill}
-                      type="button"
-                      className="create-resume-skill-suggestion"
-                      onClick={() => addSkill(skill)}
-                    >
-                      + {skill}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              )}
             </div>
           </div>
         );
@@ -1339,14 +1413,118 @@ const CreateResume = () => {
                   }
                 >
                   <div className="create-resume-template-preview">
-                    <div className="create-resume-template-placeholder">
-                      <span className="template-icon">
-                        <FaFileAlt />
-                      </span>
-                    </div>
+                    {/* Modern Template Preview */}
+                    {template.id === "modern" && (
+                      <div className="template-preview-modern">
+                        <div className="template-preview-header modern-header">
+                          <div className="preview-name"></div>
+                          <div className="preview-title"></div>
+                        </div>
+                        <div className="template-preview-body">
+                          <div className="preview-line long"></div>
+                          <div className="preview-line medium"></div>
+                          <div className="preview-section">
+                            <div className="preview-line short"></div>
+                            <div className="preview-line long"></div>
+                          </div>
+                          <div className="preview-section">
+                            <div className="preview-line short"></div>
+                            <div className="preview-line medium"></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Classic Template Preview */}
+                    {template.id === "classic" && (
+                      <div className="template-preview-classic">
+                        <div className="template-preview-header classic-header">
+                          <div className="preview-name"></div>
+                          <div className="preview-contact">
+                            <div className="preview-dot"></div>
+                            <div className="preview-dot"></div>
+                            <div className="preview-dot"></div>
+                          </div>
+                        </div>
+                        <div className="template-preview-body">
+                          <div className="preview-line long"></div>
+                          <div className="preview-section">
+                            <div className="preview-line medium"></div>
+                            <div className="preview-line long"></div>
+                          </div>
+                          <div className="preview-section">
+                            <div className="preview-line short"></div>
+                            <div className="preview-line medium"></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Creative Template Preview */}
+                    {template.id === "creative" && (
+                      <div className="template-preview-creative">
+                        <div className="template-preview-sidebar">
+                          <div className="preview-circle"></div>
+                          <div className="preview-line short"></div>
+                          <div className="preview-line short"></div>
+                        </div>
+                        <div className="template-preview-main">
+                          <div className="preview-name"></div>
+                          <div className="preview-line long"></div>
+                          <div className="preview-section">
+                            <div className="preview-line medium"></div>
+                            <div className="preview-line long"></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Minimal Template Preview */}
+                    {template.id === "minimal" && (
+                      <div className="template-preview-minimal">
+                        <div className="template-preview-header minimal-header">
+                          <div className="preview-name"></div>
+                        </div>
+                        <div className="template-preview-body">
+                          <div className="preview-line full"></div>
+                          <div className="preview-section">
+                            <div className="preview-heading"></div>
+                            <div className="preview-line long"></div>
+                          </div>
+                          <div className="preview-section">
+                            <div className="preview-heading"></div>
+                            <div className="preview-line medium"></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Fallback for unknown templates */}
+                    {!["modern", "classic", "creative", "minimal"].includes(template.id) && (
+                      <div className="create-resume-template-placeholder">
+                        <span className="template-icon">
+                          <FaFileAlt />
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <h3>{template.name}</h3>
-                  <p>Professional and clean design</p>
+                  <p>
+                    {template.id === "modern"
+                      ? "Clean gradient design with modern layout"
+                      : template.id === "classic"
+                      ? "Traditional format, perfect for corporate"
+                      : template.id === "creative"
+                      ? "Sidebar layout with bold visual elements"
+                      : template.id === "minimal"
+                      ? "Simple and clean, content-focused design"
+                      : "Professional and clean design"}
+                  </p>
+                  {formData.selectedTemplate === template.id && (
+                    <div className="template-selected-badge">
+                      <FaCheck /> Selected
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -1394,84 +1572,341 @@ const CreateResume = () => {
             )}
 
             <div className="create-resume-preview-container">
-              <div className="create-resume-preview">
-                <div className="create-resume-preview-header">
-                  <h1>{formData.fullName}</h1>
-                  <div className="create-resume-preview-contact">
-                    <p>{formData.email}</p>
-                    {formData.phone && <p>{formData.phone}</p>}
-                    {formData.location && <p>{formData.location}</p>}
-                  </div>
-                </div>
+              <div className="create-resume-template-selector">
+                <label>Preview Template:</label>
+                <select
+                  value={formData.selectedTemplate || "modern"}
+                  onChange={(e) =>
+                    handleInputChange("selectedTemplate", e.target.value)
+                  }
+                  className="template-selector-dropdown"
+                >
+                  <option value="modern">Modern</option>
+                  <option value="classic">Classic</option>
+                  <option value="creative">Creative</option>
+                  <option value="minimal">Minimal</option>
+                </select>
+              </div>
 
-                {formData.careerObjective && (
-                  <div className="create-resume-preview-section">
-                    <h3>Professional Summary</h3>
-                    <p>{formData.careerObjective}</p>
-                  </div>
-                )}
+              {/* Render template based on selection */}
+              <div className={`create-resume-preview template-${formData.selectedTemplate || "modern"}`}>
+                
+                {/* Modern Template */}
+                {(formData.selectedTemplate === "modern" || !formData.selectedTemplate) && (
+                  <div className="resume-template-modern">
+                    <div className="template-header modern-header">
+                      <h1 className="template-name">{formData.fullName || "Your Name"}</h1>
+                      <div className="template-contact">
+                        {formData.email && <span>{formData.email}</span>}
+                        {formData.phone && <span> | {formData.phone}</span>}
+                        {formData.location && <span> | {formData.location}</span>}
+                      </div>
+                      {formData.links && formData.links.some(link => link.url) && (
+                        <div className="template-links">
+                          {formData.links.filter(link => link.url).map((link, idx) => (
+                            <span key={idx}>
+                              {link.label}: {link.url}
+                              {idx < formData.links.filter(l => l.url).length - 1 && " | "}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
 
-                {formData.workExperience.some((exp) => exp.jobTitle) && (
-                  <div className="create-resume-preview-section">
-                    <h3>Work Experience</h3>
-                    {formData.workExperience.map(
-                      (exp, index) =>
-                        exp.jobTitle && (
-                          <div
-                            key={index}
-                            className="create-resume-preview-item"
-                          >
-                            <h4>
-                              {exp.jobTitle} - {exp.companyName}
-                            </h4>
-                            <p className="create-resume-preview-date">
-                              {exp.startDate} -{" "}
-                              {exp.currentJob ? "Present" : exp.endDate}
-                            </p>
-                            {exp.responsibilities && (
-                              <p>{exp.responsibilities}</p>
-                            )}
-                          </div>
-                        )
+                    {formData.careerObjective && (
+                      <div className="template-section">
+                        <h3 className="section-title">Professional Summary</h3>
+                        <p className="section-content">{formData.careerObjective}</p>
+                      </div>
+                    )}
+
+                    {formData.workExperience.some((exp) => exp.jobTitle) && (
+                      <div className="template-section">
+                        <h3 className="section-title">Work Experience</h3>
+                        {formData.workExperience.map(
+                          (exp, index) =>
+                            exp.jobTitle && (
+                              <div key={index} className="template-item">
+                                <div className="item-header">
+                                  <strong>{exp.jobTitle}</strong> - {exp.companyName}
+                                </div>
+                                <div className="item-date">
+                                  {exp.startDate} - {exp.currentJob ? "Present" : exp.endDate}
+                                </div>
+                                {exp.responsibilities && (
+                                  <p className="item-content">{exp.responsibilities}</p>
+                                )}
+                              </div>
+                            )
+                        )}
+                      </div>
+                    )}
+
+                    {formData.skills.length > 0 && (
+                      <div className="template-section">
+                        <h3 className="section-title">Skills</h3>
+                        <div className="template-skills">
+                          {formData.skills.map((skill, index) => (
+                            <span key={index} className="skill-tag">{skill}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.education.some((edu) => edu.degree) && (
+                      <div className="template-section">
+                        <h3 className="section-title">Education</h3>
+                        {formData.education.map(
+                          (edu, index) =>
+                            edu.degree && (
+                              <div key={index} className="template-item">
+                                <div className="item-header">
+                                  <strong>{edu.degree}</strong>
+                                </div>
+                                <div className="item-subheader">
+                                  {edu.institution} - {edu.graduationYear}
+                                </div>
+                              </div>
+                            )
+                        )}
+                      </div>
+                    )}
+
+                    {formData.certifications.some((cert) => cert.name) && (
+                      <div className="template-section">
+                        <h3 className="section-title">Certifications</h3>
+                        {formData.certifications.map(
+                          (cert, index) =>
+                            cert.name && (
+                              <div key={index} className="template-item">
+                                <strong>{cert.name}</strong> - {cert.institution} ({cert.dateAchieved})
+                              </div>
+                            )
+                        )}
+                      </div>
+                    )}
+
+                    {formData.languages.some((lang) => lang.name) && (
+                      <div className="template-section">
+                        <h3 className="section-title">Languages</h3>
+                        <div className="template-languages">
+                          {formData.languages.map(
+                            (lang, index) =>
+                              lang.name && (
+                                <span key={index}>
+                                  {lang.name} ({lang.proficiency})
+                                  {index < formData.languages.filter(l => l.name).length - 1 && " | "}
+                                </span>
+                              )
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}
 
-                {formData.skills.length > 0 && (
-                  <div className="create-resume-preview-section">
-                    <h3>Skills</h3>
-                    <div className="create-resume-preview-skills">
-                      {formData.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="create-resume-preview-skill"
-                        >
-                          {skill}
-                        </span>
-                      ))}
+                {/* Classic Template */}
+                {formData.selectedTemplate === "classic" && (
+                  <div className="resume-template-classic">
+                    <div className="template-header classic-header">
+                      <h1 className="template-name">{formData.fullName || "Your Name"}</h1>
+                      <div className="template-contact-classic">
+                        {formData.email && <div>{formData.email}</div>}
+                        {formData.phone && <div>{formData.phone}</div>}
+                        {formData.location && <div>{formData.location}</div>}
+                      </div>
+                    </div>
+
+                    {formData.careerObjective && (
+                      <div className="template-section classic-section">
+                        <h3 className="section-title-classic">PROFESSIONAL SUMMARY</h3>
+                        <p>{formData.careerObjective}</p>
+                      </div>
+                    )}
+
+                    {formData.workExperience.some((exp) => exp.jobTitle) && (
+                      <div className="template-section classic-section">
+                        <h3 className="section-title-classic">WORK EXPERIENCE</h3>
+                        {formData.workExperience.map(
+                          (exp, index) =>
+                            exp.jobTitle && (
+                              <div key={index} className="classic-item">
+                                <div><strong>{exp.jobTitle}</strong>, {exp.companyName}</div>
+                                <div className="classic-date">
+                                  {exp.startDate} - {exp.currentJob ? "Present" : exp.endDate}
+                                </div>
+                                {exp.responsibilities && <p>{exp.responsibilities}</p>}
+                              </div>
+                            )
+                        )}
+                      </div>
+                    )}
+
+                    {formData.skills.length > 0 && (
+                      <div className="template-section classic-section">
+                        <h3 className="section-title-classic">SKILLS</h3>
+                        <p>{formData.skills.join(", ")}</p>
+                      </div>
+                    )}
+
+                    {formData.education.some((edu) => edu.degree) && (
+                      <div className="template-section classic-section">
+                        <h3 className="section-title-classic">EDUCATION</h3>
+                        {formData.education.map(
+                          (edu, index) =>
+                            edu.degree && (
+                              <div key={index} className="classic-item">
+                                <div><strong>{edu.degree}</strong></div>
+                                <div>{edu.institution}, {edu.graduationYear}</div>
+                              </div>
+                            )
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Creative Template */}
+                {formData.selectedTemplate === "creative" && (
+                  <div className="resume-template-creative">
+                    <div className="creative-sidebar">
+                      <div className="sidebar-section">
+                        <h2 className="sidebar-name">{formData.fullName || "Your Name"}</h2>
+                      </div>
+
+                      <div className="sidebar-section">
+                        <h4>CONTACT</h4>
+                        {formData.email && <p>{formData.email}</p>}
+                        {formData.phone && <p>{formData.phone}</p>}
+                        {formData.location && <p>{formData.location}</p>}
+                      </div>
+
+                      {formData.skills.length > 0 && (
+                        <div className="sidebar-section">
+                          <h4>SKILLS</h4>
+                          {formData.skills.map((skill, index) => (
+                            <p key={index}>• {skill}</p>
+                          ))}
+                        </div>
+                      )}
+
+                      {formData.languages.some((lang) => lang.name) && (
+                        <div className="sidebar-section">
+                          <h4>LANGUAGES</h4>
+                          {formData.languages.map(
+                            (lang, index) =>
+                              lang.name && (
+                                <p key={index}>{lang.name} - {lang.proficiency}</p>
+                              )
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="creative-main">
+                      {formData.careerObjective && (
+                        <div className="creative-section">
+                          <h3 className="creative-title">About Me</h3>
+                          <p>{formData.careerObjective}</p>
+                        </div>
+                      )}
+
+                      {formData.workExperience.some((exp) => exp.jobTitle) && (
+                        <div className="creative-section">
+                          <h3 className="creative-title">Experience</h3>
+                          {formData.workExperience.map(
+                            (exp, index) =>
+                              exp.jobTitle && (
+                                <div key={index} className="creative-item">
+                                  <h4>{exp.jobTitle}</h4>
+                                  <p className="creative-company">{exp.companyName} | {exp.startDate} - {exp.currentJob ? "Present" : exp.endDate}</p>
+                                  {exp.responsibilities && <p>{exp.responsibilities}</p>}
+                                </div>
+                              )
+                          )}
+                        </div>
+                      )}
+
+                      {formData.education.some((edu) => edu.degree) && (
+                        <div className="creative-section">
+                          <h3 className="creative-title">Education</h3>
+                          {formData.education.map(
+                            (edu, index) =>
+                              edu.degree && (
+                                <div key={index} className="creative-item">
+                                  <h4>{edu.degree}</h4>
+                                  <p>{edu.institution}, {edu.graduationYear}</p>
+                                </div>
+                              )
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {formData.education.some((edu) => edu.degree) && (
-                  <div className="create-resume-preview-section">
-                    <h3>Education</h3>
-                    {formData.education.map(
-                      (edu, index) =>
-                        edu.degree && (
-                          <div
-                            key={index}
-                            className="create-resume-preview-item"
-                          >
-                            <h4>{edu.degree}</h4>
-                            <p>
-                              {edu.institution} - {edu.graduationYear}
-                            </p>
-                          </div>
-                        )
+                {/* Minimal Template */}
+                {formData.selectedTemplate === "minimal" && (
+                  <div className="resume-template-minimal">
+                    <div className="template-header minimal-header">
+                      <h1 className="minimal-name">{formData.fullName || "Your Name"}</h1>
+                      <div className="minimal-contact">
+                        {formData.email} {formData.phone && `• ${formData.phone}`} {formData.location && `• ${formData.location}`}
+                      </div>
+                    </div>
+
+                    {formData.careerObjective && (
+                      <div className="minimal-section">
+                        <p className="minimal-summary">{formData.careerObjective}</p>
+                      </div>
+                    )}
+
+                    {formData.workExperience.some((exp) => exp.jobTitle) && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Experience</h3>
+                        {formData.workExperience.map(
+                          (exp, index) =>
+                            exp.jobTitle && (
+                              <div key={index} className="minimal-item">
+                                <div className="minimal-item-header">
+                                  <span className="minimal-job">{exp.jobTitle}</span>
+                                  <span className="minimal-date">{exp.startDate} - {exp.currentJob ? "Present" : exp.endDate}</span>
+                                </div>
+                                <div className="minimal-company">{exp.companyName}</div>
+                                {exp.responsibilities && <p>{exp.responsibilities}</p>}
+                              </div>
+                            )
+                        )}
+                      </div>
+                    )}
+
+                    {formData.skills.length > 0 && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Skills</h3>
+                        <p>{formData.skills.join(" • ")}</p>
+                      </div>
+                    )}
+
+                    {formData.education.some((edu) => edu.degree) && (
+                      <div className="minimal-section">
+                        <h3 className="minimal-title">Education</h3>
+                        {formData.education.map(
+                          (edu, index) =>
+                            edu.degree && (
+                              <div key={index} className="minimal-item">
+                                <div className="minimal-item-header">
+                                  <span className="minimal-job">{edu.degree}</span>
+                                  <span className="minimal-date">{edu.graduationYear}</span>
+                                </div>
+                                <div className="minimal-company">{edu.institution}</div>
+                              </div>
+                            )
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
+
               </div>
             </div>
 
