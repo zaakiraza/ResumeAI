@@ -26,6 +26,7 @@ import {
   faChartBar,
 } from "@fortawesome/free-solid-svg-icons";
 import { useResumes } from "../../../hooks/useResume";
+import ViewPDFModal from "../../../components/ViewPDFModal/ViewPDFModal";
 import "./MyResumes.css";
 
 const MyResumes = () => {
@@ -38,6 +39,7 @@ const MyResumes = () => {
     deleteResume,
     duplicateResume,
     downloadPDF,
+    getPDFUrl,
   } = useResumes();
 
   // State for filtering and sorting
@@ -51,6 +53,12 @@ const MyResumes = () => {
   const [deleteInProgress, setDeleteInProgress] = useState(false);
   const [duplicateInProgress, setDuplicateInProgress] = useState(false);
   const [downloadInProgress, setDownloadInProgress] = useState(false);
+  
+  // PDF viewer state
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfResumeTitle, setPdfResumeTitle] = useState("");
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   // Load resumes on component mount
   useEffect(() => {
@@ -159,14 +167,53 @@ const MyResumes = () => {
 
   const handleDownloadResume = async (resumeId, template) => {
     try {
-      setDownloadInProgress(resumeId);
-      await downloadPDF(resumeId, template);
+      setPdfLoading(true);
+      
+      // First, try to get PDF URL from Cloudinary
+      const pdfData = await getPDFUrl(resumeId, template);
+      
+      if (pdfData && pdfData.pdfUrl) {
+        // PDF exists in Cloudinary - show in modal
+        const resume = resumes.find(r => r._id === resumeId);
+        setPdfUrl(pdfData.pdfUrl);
+        setPdfResumeTitle(resume?.title || "Resume");
+        setShowPDFModal(true);
+      } else {
+        // Fallback to direct download
+        await downloadPDF(resumeId, template);
+      }
+      
       setActionMenuOpen(null);
     } catch (error) {
-      console.error("Error downloading resume:", error);
+      console.error("Error viewing/downloading resume:", error);
+      
+      // Fallback to direct download on error
+      try {
+        await downloadPDF(resumeId, template);
+      } catch (downloadError) {
+        console.error("Error downloading resume:", downloadError);
+      }
     } finally {
-      setDownloadInProgress(null);
+      setPdfLoading(false);
     }
+  };
+
+  const handlePDFDownload = () => {
+    if (pdfUrl) {
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = `${pdfResumeTitle}.pdf`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const handleClosePDFModal = () => {
+    setShowPDFModal(false);
+    setPdfUrl(null);
+    setPdfResumeTitle("");
   };
 
   // Get status badge class
@@ -586,6 +633,16 @@ const MyResumes = () => {
             </div>
           </div>
         </section>
+      )}
+
+      {/* PDF Viewer Modal */}
+      {showPDFModal && pdfUrl && (
+        <ViewPDFModal
+          pdfUrl={pdfUrl}
+          resumeTitle={pdfResumeTitle}
+          onClose={handleClosePDFModal}
+          onDownload={handlePDFDownload}
+        />
       )}
     </div>
   );

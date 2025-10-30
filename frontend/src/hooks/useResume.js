@@ -117,6 +117,21 @@ export const useResumes = () => {
     }
   }, []);
 
+  // Get PDF URL from Cloudinary or backend
+  const getPDFUrl = useCallback(async (resumeId, template = null) => {
+    try {
+      setLoading(true);
+      const response = await ResumeAPI.getPDFUrl(resumeId, template);
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+      console.error('Get PDF URL error:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     resumes,
     loading,
@@ -127,6 +142,7 @@ export const useResumes = () => {
     updateStatus,
     trackDownload,
     downloadPDF,
+    getPDFUrl,
     setError, // Allow manual error clearing
   };
 };
@@ -280,6 +296,40 @@ export const useResume = (resumeId = null) => {
     }
   }, [resumeId]);
 
+  // Get PDF URL from Cloudinary or backend
+  const getPDFUrl = useCallback(async (id = resumeId, template = null) => {
+    if (!id) return;
+    
+    try {
+      setLoading(true);
+      const response = await ResumeAPI.getPDFUrl(id, template);
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+      console.error('Get PDF URL error:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [resumeId]);
+
+  // Save PDF URL after frontend generation
+  const savePDFUrl = useCallback(async (id = resumeId, pdfUrl) => {
+    if (!id || !pdfUrl) return;
+    
+    try {
+      const response = await ResumeAPI.savePDFUrl(id, pdfUrl);
+      
+      // Update local resume state
+      setResume(prev => prev ? { ...prev, pdfUrl } : null);
+      
+      return response.data;
+    } catch (err) {
+      console.error('Save PDF URL error:', err);
+      // Don't throw error - this is not critical
+    }
+  }, [resumeId]);
+
   // Load resume on mount if resumeId is provided
   useEffect(() => {
     if (resumeId) {
@@ -298,6 +348,8 @@ export const useResume = (resumeId = null) => {
     saveAsDraft,
     trackDownload,
     downloadPDF,
+    getPDFUrl,
+    savePDFUrl,
     setResume, // Allow manual resume updates
     setError,  // Allow manual error clearing
   };

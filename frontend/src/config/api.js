@@ -1,9 +1,9 @@
 // API Configuration
 export const API_CONFIG = {
-  // BASE_URL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5003/api",
-  BASE_URL:
-    import.meta.env.VITE_API_BASE_URL ||
-    "https://resume-backend-roan-nu.vercel.app/api",
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5003/api",
+  // BASE_URL:
+  //   import.meta.env.VITE_API_BASE_URL ||
+  //   "https://resume-backend-roan-nu.vercel.app/api",
   ENDPOINTS: {
     // Authentication endpoints
     LOGIN: "/auth/login",
@@ -27,6 +27,7 @@ export const API_CONFIG = {
     RESUME_STATUS: "/resumes/:id/status",
     RESUME_DOWNLOAD: "/resumes/:id/download",
     RESUME_PDF: "/resumes/:id/pdf",
+    RESUME_PDF_URL: "/resumes/:id/pdf-url",
     RESUME_DRAFT: "/resumes/:id/draft",
     RESUME_NEW_DRAFT: "/resumes/draft",
     RESUME_TEMPLATES: "/resumes/templates",

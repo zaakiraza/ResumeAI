@@ -22,6 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../../hooks/useUser";
 import { useResumes } from "../../../hooks/useResume";
+import ViewPDFModal from "../../../components/ViewPDFModal/ViewPDFModal";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -33,6 +34,7 @@ function Dashboard() {
     fetchResumes,
     deleteResume,
     downloadPDF,
+    getPDFUrl,
   } = useResumes();
 
   const [notifications, setNotifications] = useState([
@@ -55,6 +57,11 @@ function Dashboard() {
       type: "reminder",
     },
   ]);
+
+  // PDF viewer state
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfResumeTitle, setPdfResumeTitle] = useState("");
 
   useEffect(() => {
     fetchResumes();
@@ -84,12 +91,53 @@ function Dashboard() {
   const handleDownloadResume = async (resumeId) => {
     try {
       console.log(resumeId);
-      await downloadPDF(resumeId);
-      toast.success("Resume downloaded successfully!");
+      
+      // First, try to get PDF URL from Cloudinary
+      const pdfData = await getPDFUrl(resumeId);
+      
+      if (pdfData && pdfData.pdfUrl) {
+        // PDF exists in Cloudinary - show in modal
+        const resume = resumes.find(r => r._id === resumeId);
+        setPdfUrl(pdfData.pdfUrl);
+        setPdfResumeTitle(resume?.title || "Resume");
+        setShowPDFModal(true);
+        toast.success("Opening PDF viewer...");
+      } else {
+        // Fallback to direct download
+        await downloadPDF(resumeId);
+        toast.success("Resume downloaded successfully!");
+      }
     } catch (error) {
-      console.error("Error downloading resume:", error);
-      toast.error("Failed to download resume. Please try again.");
+      console.error("Error viewing/downloading resume:", error);
+      
+      // Fallback to direct download on error
+      try {
+        await downloadPDF(resumeId);
+        toast.success("Resume downloaded successfully!");
+      } catch (downloadError) {
+        console.error("Error downloading resume:", downloadError);
+        toast.error("Failed to download resume. Please try again.");
+      }
     }
+  };
+
+  const handlePDFDownload = () => {
+    if (pdfUrl) {
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = `${pdfResumeTitle}.pdf`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Resume downloaded successfully!");
+    }
+  };
+
+  const handleClosePDFModal = () => {
+    setShowPDFModal(false);
+    setPdfUrl(null);
+    setPdfResumeTitle("");
   };
 
   const handleDeleteResume = async (resumeId) => {
@@ -444,6 +492,16 @@ function Dashboard() {
           </div>
         </section>
       </div>
+
+      {/* PDF Viewer Modal */}
+      {showPDFModal && pdfUrl && (
+        <ViewPDFModal
+          pdfUrl={pdfUrl}
+          resumeTitle={pdfResumeTitle}
+          onClose={handleClosePDFModal}
+          onDownload={handlePDFDownload}
+        />
+      )}
     </div>
   );
 }

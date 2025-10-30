@@ -11,7 +11,9 @@ import {
   trackResumeDownload,
   saveResumeAsDraft,
   downloadResumePDF,
-  getResumeTemplates
+  getResumeTemplates,
+  getResumePDFUrl,
+  uploadResumePDFToCloudinary
 } from '../controllers/resumeController.js';
 
 const resumeRouter = express.Router();
@@ -34,5 +36,7 @@ resumeRouter.patch('/:id/status', updateResumeStatus); // PATCH /api/resumes/:id
 resumeRouter.post('/:id/download', trackResumeDownload); // POST /api/resumes/:id/download - Track download
 resumeRouter.post('/:id/draft', saveResumeAsDraft);     // POST /api/resumes/:id/draft - Save as draft
 resumeRouter.get('/:id/pdf', downloadResumePDF);        // GET /api/resumes/:id/pdf - Download PDF
+resumeRouter.get('/:id/pdf-url', getResumePDFUrl);      // GET /api/resumes/:id/pdf-url - Get Cloudinary PDF URL
+resumeRouter.post('/:id/pdf-url', uploadResumePDFToCloudinary); // POST /api/resumes/:id/pdf-url - Save PDF URL
 
 export default resumeRouter;

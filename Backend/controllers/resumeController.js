@@ -5,6 +5,7 @@ import { successResponse, errorResponse } from "../utils/responseHandler.js";
 import PDFService from "../utils/pdfService.js";
 import NotificationService from "../utils/notificationService.js";
 import AchievementService from "../utils/achievementService.js";
+import CloudinaryService from "../utils/cloudinaryService.js";
 
 // Helper function to add/update skills in the database
 const processSkills = async (skills, userId) => {
@@ -708,6 +709,129 @@ export const downloadResumePDF = async (req, res) => {
   } catch (error) {
     console.error("Download PDF Error:", error);
     errorResponse(res, 500, "Failed to generate PDF", {
+      error: error.message,
+    });
+  }
+};
+
+// Get PDF URL from Cloudinary or indicate generation needed
+export const getResumePDFUrl = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    // Find the resume
+    const resume = await Resume.findOne({ _id: id, userId });
+
+    if (!resume) {
+      return errorResponse(res, 404, "Resume not found");
+    }
+
+    // Check if PDF URL exists in Cloudinary
+    if (resume.pdfUrl) {
+      return successResponse(res, 200, "PDF URL retrieved successfully", {
+        pdfUrl: resume.pdfUrl,
+        fromCloudinary: true,
+        resumeTitle: resume.title,
+        template: resume.selectedTemplate || resume.template
+      });
+    }
+
+    // If no PDF URL exists, try to generate and upload to Cloudinary
+    const { template } = req.query;
+    const selectedTemplate = template || resume.selectedTemplate || "modern";
+
+    // Check if we're in a serverless environment
+    const isServerless = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
+    if (isServerless || !CloudinaryService.isConfigured()) {
+      // In serverless or if Cloudinary not configured, indicate frontend should generate
+      return successResponse(res, 200, "PDF needs to be generated", {
+        pdfUrl: null,
+        fromCloudinary: false,
+        needsGeneration: true,
+        resumeData: resume,
+        template: selectedTemplate
+      });
+    }
+
+    // Try to generate PDF locally and upload to Cloudinary
+    try {
+      const pdfBuffer = await PDFService.generateResumePDF(resume, selectedTemplate);
+      
+      // Upload to Cloudinary
+      const filename = `${resume.personalInfo?.fullName || 'Resume'}_${selectedTemplate}_${Date.now()}`;
+      const uploadResult = await CloudinaryService.uploadPDF(pdfBuffer, {
+        folder: `resumeai/user-resume/${userId}`,
+        filename
+      });
+
+      if (uploadResult.success) {
+        // Save PDF URL to resume
+        resume.pdfUrl = uploadResult.secure_url;
+        await resume.save();
+
+        return successResponse(res, 200, "PDF generated and uploaded successfully", {
+          pdfUrl: uploadResult.secure_url,
+          fromCloudinary: true,
+          resumeTitle: resume.title,
+          template: selectedTemplate
+        });
+      } else {
+        throw new Error(uploadResult.error || 'Cloudinary upload failed');
+      }
+    } catch (genError) {
+      console.error('PDF generation/upload failed:', genError);
+      
+      // Fallback: indicate frontend should generate
+      return successResponse(res, 200, "PDF needs to be generated on frontend", {
+        pdfUrl: null,
+        fromCloudinary: false,
+        needsGeneration: true,
+        resumeData: resume,
+        template: selectedTemplate,
+        error: genError.message
+      });
+    }
+
+  } catch (error) {
+    console.error("Get PDF URL Error:", error);
+    errorResponse(res, 500, "Failed to retrieve PDF URL", {
+      error: error.message,
+    });
+  }
+};
+
+// Upload PDF to Cloudinary (called from frontend after generation)
+export const uploadResumePDFToCloudinary = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const { pdfUrl } = req.body;
+
+    if (!pdfUrl) {
+      return errorResponse(res, 400, "PDF URL is required");
+    }
+
+    // Find the resume
+    const resume = await Resume.findOne({ _id: id, userId });
+
+    if (!resume) {
+      return errorResponse(res, 404, "Resume not found");
+    }
+
+    // Update resume with PDF URL
+    resume.pdfUrl = pdfUrl;
+    await resume.save();
+
+    return successResponse(res, 200, "PDF URL saved successfully", {
+      resume,
+      pdfUrl
+    });
+
+  } catch (error) {
+    console.error("Upload PDF URL Error:", error);
+    errorResponse(res, 500, "Failed to save PDF URL", {
       error: error.message,
     });
   }

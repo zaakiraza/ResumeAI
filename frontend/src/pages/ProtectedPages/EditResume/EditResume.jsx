@@ -2,18 +2,24 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSave, FaDownload, FaFileAlt, FaTimes, FaCheck, FaGlobe, FaTrash, FaPlus } from 'react-icons/fa';
 import { useResume } from '../../../hooks/useResume';
+import ViewPDFModal from '../../../components/ViewPDFModal/ViewPDFModal';
 import toast from 'react-hot-toast';
 import './EditResume.css';
 
 const EditResume = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { resume, loading, error: resumeError, fetchResume, updateResume, downloadPDF } = useResume(id);
+  const { resume, loading, error: resumeError, fetchResume, updateResume, downloadPDF, getPDFUrl } = useResume(id);
   const [formData, setFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saveStatus, setSaveStatus] = useState('idle'); // 'idle', 'saving', 'saved', 'error'
   const [activeTab, setActiveTab] = useState('personal');
+  
+  // PDF viewer state
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfResumeTitle, setPdfResumeTitle] = useState("");
   
   // We don't need to fetch the resume here because useResume already does it
   useEffect(() => {
@@ -163,12 +169,53 @@ const EditResume = () => {
       // Get template from formData or fallback to modern
       const template = formData?.selectedTemplate || formData?.template || 'modern';
       console.log("Downloading with template:", template);
-      await downloadPDF(id, template);
-      toast.success("Resume downloaded successfully!");
+      
+      // First, try to get PDF URL from Cloudinary
+      const pdfData = await getPDFUrl(id, template);
+      
+      if (pdfData && pdfData.pdfUrl) {
+        // PDF exists in Cloudinary - show in modal
+        setPdfUrl(pdfData.pdfUrl);
+        setPdfResumeTitle(formData?.title || "Resume");
+        setShowPDFModal(true);
+        toast.success("Opening PDF viewer...");
+      } else {
+        // Fallback to direct download
+        await downloadPDF(id, template);
+        toast.success("Resume downloaded successfully!");
+      }
     } catch (err) {
-      console.error("Error downloading resume:", err);
-      toast.error(`Failed to download resume as ${format.toUpperCase()}. Please try again.`);
+      console.error("Error viewing/downloading resume:", err);
+      
+      // Fallback to direct download on error
+      try {
+        const template = formData?.selectedTemplate || formData?.template || 'modern';
+        await downloadPDF(id, template);
+        toast.success("Resume downloaded successfully!");
+      } catch (downloadErr) {
+        console.error("Error downloading resume:", downloadErr);
+        toast.error(`Failed to download resume as ${format.toUpperCase()}. Please try again.`);
+      }
     }
+  };
+
+  const handlePDFDownload = () => {
+    if (pdfUrl) {
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = `${pdfResumeTitle}.pdf`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Resume downloaded successfully!");
+    }
+  };
+
+  const handleClosePDFModal = () => {
+    setShowPDFModal(false);
+    setPdfUrl(null);
+    setPdfResumeTitle("");
   };
   
   // Go back to My Resumes page
@@ -1519,6 +1566,16 @@ const EditResume = () => {
           <FaSave /> {saveStatus === 'saving' ? 'Saving...' : 'Save'}
         </button>
       </div>
+
+      {/* PDF Viewer Modal */}
+      {showPDFModal && pdfUrl && (
+        <ViewPDFModal
+          pdfUrl={pdfUrl}
+          resumeTitle={pdfResumeTitle}
+          onClose={handleClosePDFModal}
+          onDownload={handlePDFDownload}
+        />
+      )}
     </div>
   );
 };

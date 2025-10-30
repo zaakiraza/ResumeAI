@@ -308,6 +308,45 @@ export class ResumeAPI {
       throw error;
     }
   }
+
+  // Get PDF URL from Cloudinary or backend
+  static async getPDFUrl(resumeId, template = null) {
+    try {
+      let url = buildApiUrl(API_CONFIG.ENDPOINTS.RESUME_PDF_URL.replace(':id', resumeId));
+      
+      if (template) {
+        url += `?template=${encodeURIComponent(template)}`;
+      }
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: buildHeaders(),
+      });
+      
+      return await handleResponse(response);
+    } catch (error) {
+      console.error('Get PDF URL Error:', error);
+      throw error;
+    }
+  }
+
+  // Save PDF URL to backend (after frontend generation)
+  static async savePDFUrl(resumeId, pdfUrl) {
+    try {
+      const url = buildApiUrl(API_CONFIG.ENDPOINTS.RESUME_PDF_URL.replace(':id', resumeId));
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: buildHeaders(),
+        body: JSON.stringify({ pdfUrl }),
+      });
+      
+      return await handleResponse(response);
+    } catch (error) {
+      console.error('Save PDF URL Error:', error);
+      throw error;
+    }
+  }
 }
 
 // Export individual functions for easier importing
@@ -323,6 +362,8 @@ export const {
   saveAsDraft,
   getTemplates,
   downloadPDF,
+  getPDFUrl,
+  savePDFUrl,
 } = ResumeAPI;
 
 // Default export
