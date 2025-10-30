@@ -67,10 +67,10 @@ const Services = () => {
               </div>
 
               <div className="service-footer">
-                <a href={service.ctaLink} className="service-cta">
+                <Link to={service.ctaLink} className="service-cta">
                   {service.ctaText}
                   <span className="cta-arrow">→</span>
-                </a>
+                </Link>
               </div>
             </div>
           ))}

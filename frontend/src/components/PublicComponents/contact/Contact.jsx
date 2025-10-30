@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import "./Contact.css";
 
 const Contact = () => {
@@ -111,7 +112,9 @@ const Contact = () => {
                       ? (e) => {
                           e.preventDefault();
                           // Here you would trigger your live chat widget
-                          toast.info("Live chat feature coming soon!", { duration: 3000 });
+                          toast.info("Live chat feature coming soon!", {
+                            duration: 3000,
+                          });
                         }
                       : undefined
                   }
@@ -276,12 +279,12 @@ const Contact = () => {
             answers.
           </p>
           <div className="bottom-cta-buttons">
-            <a href="/faq" className="bottom-cta-btn primary">
+            <Link to="/helpSupport" className="bottom-cta-btn primary">
               View FAQ
-            </a>
-            <a href="/contact" className="bottom-cta-btn secondary">
+            </Link>
+            <Link to="/contact" className="bottom-cta-btn secondary">
               Help Center
-            </a>
+            </Link>
           </div>
         </div>
       </div>

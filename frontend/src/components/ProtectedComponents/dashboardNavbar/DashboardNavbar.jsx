@@ -184,8 +184,6 @@ const DashboardNavbar = () => {
     return user?.profilePicture || null;
   };
 
-  // console.log(badgeText);
-
   return (
     <nav
       className="dashboard-navbar"
@@ -206,7 +204,50 @@ const DashboardNavbar = () => {
           />
         </div>
 
-        {/* Mobile Menu Toggle */}
+        {/* Desktop Navigation Items */}
+        <ul className="dashboard-nav-items desktop-nav" role="menubar">
+          <li role="none">
+            <button
+              className={`dashboard-nav-link ${
+                isActiveRoute("/dashboard") ? "active" : ""
+              }`}
+              onClick={() => handleNavigation("/dashboard")}
+              role="menuitem"
+              aria-current={isActiveRoute("/dashboard") ? "page" : undefined}
+            >
+              <FontAwesomeIcon icon={faHome} className="nav-icon" />
+              <span className="nav-text">Home</span>
+            </button>
+          </li>
+          <li role="none">
+            <button
+              className={`dashboard-nav-link ${
+                isActiveRoute("/my-resumes") ? "active" : ""
+              }`}
+              onClick={() => handleNavigation("/my-resumes")}
+              role="menuitem"
+              aria-current={isActiveRoute("/my-resumes") ? "page" : undefined}
+            >
+              <FontAwesomeIcon icon={faFileAlt} className="nav-icon" />
+              <span className="nav-text">My Resumes</span>
+            </button>
+          </li>
+          <li role="none">
+            <button
+              className={`dashboard-nav-link ${
+                isActiveRoute("/ai-tools") ? "active" : ""
+              }`}
+              onClick={() => handleNavigation("/ai-tools")}
+              role="menuitem"
+              aria-current={isActiveRoute("/ai-tools") ? "page" : undefined}
+            >
+              <FontAwesomeIcon icon={faRobot} className="nav-icon" />
+              <span className="nav-text">AI Tools</span>
+            </button>
+          </li>
+        </ul>
+
+        {/* Mobile Menu Toggle - Only visible on mobile */}
         <button
           className="mobile-menu-toggle"
           onClick={toggleMobileMenu}

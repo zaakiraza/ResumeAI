@@ -102,7 +102,7 @@
 
 /* ===== MOBILE MENU TOGGLE ===== */
 .mobile-menu-toggle {
-  display: flex;
+  display: none !important; /* Hidden by default on desktop */
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -325,9 +325,58 @@
   display: flex;
 }
 
-/* Hide old navigation items */
-.dashboard-nav-items {
-  display: none;
+/* Desktop Navigation Items - Show on desktop */
+.dashboard-nav-items.desktop-nav {
+  display: flex !important;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.5rem;
+}
+
+.dashboard-nav-items.desktop-nav .dashboard-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.dashboard-nav-items.desktop-nav .dashboard-nav-link:hover {
+  background-color: var(--color-hover-cyan);
+  color: var(--color-primary-blue);
+}
+
+.dashboard-nav-items.desktop-nav .dashboard-nav-link:focus {
+  outline: none;
+  background-color: var(--color-hover-cyan);
+  color: var(--color-primary-blue);
+}
+
+.dashboard-nav-items.desktop-nav .dashboard-nav-link:focus-visible {
+  outline: 2px solid var(--color-primary-cyan);
+  outline-offset: 2px;
+}
+
+.dashboard-nav-items.desktop-nav .dashboard-nav-link.active {
+  background-color: var(--color-primary-cyan);
+  color: var(--color-secondary-white);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dashboard-nav-items.desktop-nav .dashboard-nav-link.active:hover {
+  background-color: var(--color-primary-blue);
 }
 
 /* ===== NAVIGATION ICONS ===== */
@@ -735,10 +784,41 @@
   .dashboard-navbar-right {
     gap: 0.75rem;
   }
+
+  /* Reduce spacing on smaller desktops */
+  .dashboard-nav-items.desktop-nav {
+    gap: 0.25rem;
+  }
+
+  .dashboard-nav-items.desktop-nav .dashboard-nav-link {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 900px) {
-  /* Keep everything visible on desktop/tablet */
+  /* Hide text labels, show only icons on tablets */
+  .dashboard-nav-items.desktop-nav .nav-text {
+    display: none;
+  }
+
+  .dashboard-nav-items.desktop-nav .dashboard-nav-link {
+    padding: 0.75rem;
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .dashboard-nav-items.desktop-nav {
+    gap: 0.25rem;
+  }
+
+  .profile-name {
+    display: none;
+  }
+
+  .dashboard-navbar-right {
+    gap: 0.5rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -751,6 +831,11 @@
     max-height: 40px;
   }
 
+  /* Hide desktop navigation on mobile */
+  .dashboard-nav-items.desktop-nav {
+    display: none !important;
+  }
+
   /* Hide desktop-only items on mobile */
   .desktop-only {
     display: none !important;
@@ -758,7 +843,7 @@
 
   /* Show mobile menu toggle */
   .mobile-menu-toggle {
-    display: flex;
+    display: flex !important;
   }
 
   .dashboard-navbar-right {

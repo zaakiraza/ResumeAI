@@ -24,20 +24,9 @@
   gap: 10px;
 }
 
-.logo h1 {
-  font-size: 2.2rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-white);
-  text-shadow: 0 2px 4px var(--shadow-dark);
-  letter-spacing: -0.5px;
+.logo img {
   cursor: pointer;
-  transition: color var(--transition-normal);
 }
-
-.logo h1:hover {
-  color: var(--color-primary-electric-blue);
-}
-
 .navItems {
   display: flex;
   justify-content: center;

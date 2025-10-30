@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Footer from "../../../components/PublicComponents/footer/Footer";
 import toast from "react-hot-toast";
 import "./Contact.css";
+import { Link } from "react-router-dom";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -38,22 +39,21 @@ const Contact = () => {
     {
       icon: <i className="fa-solid fa-envelope"></i>,
       title: "Email Support",
-      description: "Email us at support@resumeai.com for any inquiries.",
-      contact: "support@resumeai.com",
-      link: "mailto:support@resumeai.com",
+      description: "Email us for any inquiries.",
+      contact: "raaza.zaakir@gmail.com",
+      link: "mailto:raaza.zaakir@gmail.com",
     },
     {
       icon: <i className="fa-solid fa-phone"></i>,
       title: "Phone Support",
-      description: "Call us at +1 (555) 123-4567 (Mon-Fri, 9 AM - 6 PM).",
-      contact: "+1 (555) 123-4567",
+      description: "Call us at +92 3293271727",
+      contact: "+92 3293271727",
       link: "tel:+15551234567",
     },
     {
       icon: "💬",
       title: "Live Chat",
-      description:
-        "Chat with us anytime! Our team is available 24/7 to help you.",
+      description: "Chat with us anytime! Our team is available to help you.",
       contact: "Available 24/7",
       link: "#chat",
     },
@@ -71,7 +71,7 @@ const Contact = () => {
     {
       name: "LinkedIn",
       icon: <i className="fa-brands fa-linkedin"></i>,
-      url: "https://linkedin.com/company/resumeai",
+      url: "https://linkedin.com/in/zakiraza404",
       color: "#0077B5",
     },
     {
@@ -85,7 +85,7 @@ const Contact = () => {
       icon: <i className="fa-brands fa-github"></i>,
       url: "https://github.com/zaakiraza",
       color: "#000000",
-    }
+    },
   ];
 
   return (
@@ -148,7 +148,9 @@ const Contact = () => {
         <div className="contact-page-container">
           <div className="contact-page-form-content">
             <div className="contact-page-form-info">
-              <h2 className="contact-page-section-title">Send Us a Message</h2>
+              <h2 className="contact-page-section-title heading">
+                Send Us a Message
+              </h2>
               <p className="contact-page-form-description">
                 Fill out the form below and we'll get back to you within 24
                 hours. We're committed to providing you with the best support
@@ -251,7 +253,7 @@ const Contact = () => {
       </section>
 
       {/* Office Location Section */}
-      <section className="contact-page-location">
+      {/* <section className="contact-page-location">
         <div className="contact-page-container">
           <h2 className="contact-page-section-title">Visit Our Office</h2>
           <p className="contact-page-section-subtitle">
@@ -290,7 +292,7 @@ const Contact = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* FAQ Section */}
       <section className="contact-page-faq">
@@ -304,18 +306,18 @@ const Contact = () => {
               for immediate answers to common queries.
             </p>
             <div className="contact-page-faq-buttons">
-              <a
-                href="/faq"
+              <Link
+                to="/helpSupport"
                 className="contact-page-btn contact-page-btn-primary"
               >
                 View FAQ
-              </a>
-              <a
-                href="/help"
+              </Link>
+              <Link
+                to="/helpSupport"
                 className="contact-page-btn contact-page-btn-secondary"
               >
                 Help Center
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -337,7 +339,7 @@ const Contact = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-page-social-card"
-                style={{ "--social-color": social.color }}
+                style={{ color: social.color }}
               >
                 <div className="contact-page-social-icon">{social.icon}</div>
                 <span className="contact-page-social-name">{social.name}</span>

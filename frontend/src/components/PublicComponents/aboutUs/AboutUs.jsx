@@ -29,7 +29,7 @@ const AboutUs = () => {
 
   const stats = [
     { number: "10K+", label: "Resumes Created" },
-    { number: "50+", label: "Languages Supported" },
+    { number: "50+", label: "Languages Supported", comingsoon: true },
     { number: "95%", label: "Success Rate" },
     { number: "24/7", label: "AI Support" },
   ];
@@ -132,6 +132,9 @@ const AboutUs = () => {
                 <div className="stat-number">{stat.number}</div>
                 <div className="stat-label">{stat.label}</div>
                 <div className="stat-line"></div>
+                {stat.comingsoon && (
+                  <div className="coming-soon-badge">Coming Soon</div>
+                )}
               </div>
             ))}
           </div>

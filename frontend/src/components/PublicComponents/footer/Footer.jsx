@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
 const Footer = () => {
@@ -33,7 +34,7 @@ const Footer = () => {
     ],
     support: [
       { name: "Contact Us", href: "/contact" },
-      { name: "FAQ", href: "/faq" },
+      { name: "FAQ", href: "/helpSupport" },
       { name: "Help Center", href: "/contact" },
     ],
     quickLinks: [
@@ -70,7 +71,9 @@ const Footer = () => {
           <div className="footer-brand">
             <div className="brand-logo">
               {/* <h3 className="brand-name">ResumeAI</h3> */}
-              <img src="/logo.png" alt="logo" />
+              <Link to="/">
+                <img src="/logo.png" alt="logo" />
+              </Link>
               {/* <span className="brand-icon">🚀</span> */}
             </div>
             <p className="brand-tagline">
@@ -135,9 +138,12 @@ const Footer = () => {
               <ul className="nav-list">
                 {navigationLinks.company.map((link) => (
                   <li key={link.name} className="nav-item">
-                    <a href={link.href} className="nav-link">
+                    <Link to={link.href} className="nav-link">
                       {link.name}
-                    </a>
+                    </Link>
+                    {/* <a href={link.href} className="nav-link">
+                      {link.name}
+                    </a> */}
                   </li>
                 ))}
               </ul>
@@ -149,9 +155,12 @@ const Footer = () => {
               <ul className="nav-list">
                 {navigationLinks.support.map((link) => (
                   <li key={link.name} className="nav-item">
-                    <a href={link.href} className="nav-link">
+                    <Link to={link.href} className="nav-link">
                       {link.name}
-                    </a>
+                    </Link>
+                    {/* <a href={link.href} className="nav-link">
+                      {link.name}
+                    </a> */}
                   </li>
                 ))}
               </ul>
@@ -163,9 +172,12 @@ const Footer = () => {
               <ul className="nav-list">
                 {navigationLinks.quickLinks.map((link) => (
                   <li key={link.name} className="nav-item">
-                    <a href={link.href} className="nav-link">
+                    <Link to={link.href} className="nav-link">
                       {link.name}
-                    </a>
+                    </Link>
+                    {/* <a href={link.href} className="nav-link">
+                      {link.name}
+                    </a> */}
                   </li>
                 ))}
               </ul>

@@ -1,5 +1,6 @@
 // Routes
 import ProtectedRoutes from "./Routes/ProtectedRoutes";
+import PublicRoutes from "./Routes/PublicRoutes";
 
 // Navbars
 import Navbar from "./components/PublicComponents/navbar/Navbar";
@@ -10,7 +11,6 @@ import Home from "./pages/PublicPages/home/Home";
 import About from "./pages/PublicPages/about/About";
 import Services from "./pages/PublicPages/services/Services";
 import Contact from "./pages/PublicPages/contact/Contact";
-import Faq from "./pages/PublicPages/faq/Faq";
 import VerifyOtp from "./pages/PublicPages/VerifyOtp/VerifyOtp";
 import ForgotPassword from "./pages/PublicPages/forgotPassword/orgotPassword";
 import SignIn from "./pages/PublicPages/login/ignin";
@@ -27,14 +27,13 @@ import MyResumes from "./pages/ProtectedPages/MyResumes/MyResumes";
 import Notifications from "./pages/ProtectedPages/notifications/Notifications";
 import Profile from "./pages/ProtectedPages/Profile/Profile";
 import Settings from "./pages/ProtectedPages/Settings/Settings";
-// import ViewResumePDF from "./pages/ProtectedPages/ViewResumePDF/ViewResumePDF";
 import AuthSuccess from "./pages/AuthSuccess";
 
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 function App() {
-  const dashboardAllowed = [
+  const navbarAllowed = [
     "/",
     "/home",
     "/signin",
@@ -42,7 +41,6 @@ function App() {
     "/about",
     "/services",
     "/contact",
-    "/faq",
   ];
 
   const dashboardNavbarAllowed = [
@@ -50,7 +48,6 @@ function App() {
     "/ai-tools",
     "/create-resume",
     "/edit-resume",
-    "/helpSupport",
     "/my-resumes",
     "/notifications",
     "/profile",
@@ -58,7 +55,7 @@ function App() {
   ];
 
   const location = useLocation();
-  const isDashboardAllowed = dashboardAllowed.includes(location.pathname);
+  const isNavbarAllowed = navbarAllowed.includes(location.pathname);
   const isDashboardNavbarAllowed = dashboardNavbarAllowed.includes(
     location.pathname
   );
@@ -71,39 +68,40 @@ function App() {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#fff',
-            color: '#363636',
-            padding: '16px',
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            background: "#fff",
+            color: "#363636",
+            padding: "16px",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
           },
           success: {
             duration: 3000,
             iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
+              primary: "#10b981",
+              secondary: "#fff",
             },
           },
           error: {
             duration: 4000,
             iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+              primary: "#ef4444",
+              secondary: "#fff",
             },
           },
         }}
       />
-      {isDashboardAllowed && <Navbar />}
+      {isNavbarAllowed && <Navbar />}
       {isDashboardNavbarAllowed && <DashboardNavbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route element={<PublicRoutes />}>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/faq" element={<Faq />} />
 
         <Route path="/VerifyOtp" element={<VerifyOtp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
