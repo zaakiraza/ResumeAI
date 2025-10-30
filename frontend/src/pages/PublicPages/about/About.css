@@ -2,7 +2,7 @@
 
 /* Container */
 .about-page-container {
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
 }
@@ -17,7 +17,7 @@
 }
 
 .about-page-hero-content {
-  max-width: 800px;
+  width: 80%;
   margin: 0 auto;
 }
 
@@ -126,7 +126,7 @@
 }
 
 .about-page-story-content {
-  max-width: 800px;
+  width: 92%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -184,7 +184,7 @@
   color: var(--color-text-secondary);
   text-align: center;
   margin-bottom: 60px;
-  max-width: 600px;
+  width: 72%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -391,7 +391,6 @@
 }
 
 .about-page-cta-content {
-  max-width: 600px;
   margin: 0 auto;
 }
 
