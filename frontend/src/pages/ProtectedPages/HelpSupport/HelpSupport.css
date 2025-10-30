@@ -436,6 +436,7 @@
 
   .help-support-tabs {
     overflow-x: auto;
+    overflow-y: hidden;
     justify-content: flex-start;
     -webkit-overflow-scrolling: touch;
   }

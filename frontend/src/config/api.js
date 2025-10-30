@@ -62,6 +62,14 @@ export const API_CONFIG = {
     SKILL_BATCH: "/skills/batch",
     SKILL_VERIFY: "/skills/:id/verify",
     SKILL_UPDATE_CATEGORY: "/skills/:id/category",
+
+    // Contact endpoint
+    CONTACT: "/contact",
+
+    // Newsletter endpoints
+    NEWSLETTER_SUBSCRIBE: "/newsletter/subscribe",
+    NEWSLETTER_UNSUBSCRIBE: "/newsletter/unsubscribe",
+    NEWSLETTER_STATS: "/newsletter/stats",
   },
 };
 

@@ -624,7 +624,7 @@ export const downloadResumePDF = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
-    const { template } = req.query; // Optional template override
+    const { template } = req.query;
 
     // Find the resume
     const resume = await Resume.findOne({ _id: id, userId });
@@ -645,7 +645,7 @@ export const downloadResumePDF = async (req, res) => {
       // Log PDF buffer size and environment for diagnostics
       try {
         const sizeBytes = Buffer.byteLength(pdfBuffer);
-        console.info(`Generated PDF buffer size: ${sizeBytes} bytes. ENV: ${process.env.NODE_ENV || 'unknown'}`);
+        // console.info(`Generated PDF buffer size: ${sizeBytes} bytes. ENV: ${process.env.NODE_ENV || 'unknown'}`);
       } catch (logErr) {
         console.warn('Could not determine PDF buffer size:', logErr?.message || logErr);
       }

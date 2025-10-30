@@ -1,28 +1,54 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { buildApiUrl, API_ENDPOINTS } from "../../../config/api";
 import "./Footer.css";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
-  const [subscribeStatus, setSubscribeStatus] = useState(null);
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
 
     setIsSubscribing(true);
 
-    // Simulate newsletter subscription
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setSubscribeStatus("success");
-      setEmail("");
+      const response = await fetch(buildApiUrl(API_ENDPOINTS.NEWSLETTER_SUBSCRIBE), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          source: "footer",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status) {
+        toast.success(data.message || "Successfully subscribed to our newsletter!");
+        setEmail("");
+      } else {
+        toast.error(data.message || "Failed to subscribe. Please try again.");
+      }
     } catch (error) {
-      setSubscribeStatus("error");
+      console.error("Newsletter subscription error:", error);
+      toast.error("An error occurred. Please try again later.");
     } finally {
       setIsSubscribing(false);
-      setTimeout(() => setSubscribeStatus(null), 4000);
     }
   };
 
@@ -201,6 +227,7 @@ const Footer = () => {
                   placeholder="Enter your email"
                   className="newsletter-input"
                   required
+                  disabled={isSubscribing}
                 />
                 <button
                   type="submit"
@@ -222,23 +249,6 @@ const Footer = () => {
                   )}
                 </button>
               </div>
-
-              {subscribeStatus && (
-                <div className={`subscribe-status ${subscribeStatus}`}>
-                  {subscribeStatus === "success" ? (
-                    <>
-                      <span className="status-icon">✅</span>
-                      Thank you for subscribing! Check your email for
-                      confirmation.
-                    </>
-                  ) : (
-                    <>
-                      <span className="status-icon">❌</span>
-                      Something went wrong. Please try again later.
-                    </>
-                  )}
-                </div>
-              )}
             </form>
 
             {/* Footer CTA */}

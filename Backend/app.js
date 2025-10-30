@@ -15,6 +15,8 @@ import feedbackRouter from "./routes/feedbackRoutes.js";
 import aiToolsRouter from "./routes/aiToolsRoutes.js";
 import googleAuthRouter from "./routes/googleAuthRoutes.js";
 import skillRouter from "./routes/skillRoutes.js";
+import contactRouter from "./routes/contactRoutes.js";
+import newsletterRouter from "./routes/newsletterRoutes.js";
 
 // Load environment variables FIRST
 dotenv.config();
@@ -72,6 +74,8 @@ app.use("/api/notifications", notificationRouter);
 app.use("/api/feedback", feedbackRouter);
 app.use("/api/ai", aiToolsRouter);
 app.use("/api/skills", skillRouter);
+app.use("/api/contact", contactRouter);
+app.use("/api/newsletter", newsletterRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, World! Your server is running 🎉");

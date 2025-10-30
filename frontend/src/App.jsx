@@ -113,12 +113,12 @@ function App() {
           <Route path="/ai-tools" element={<AITools />} />
           <Route path="/create-resume" element={<CreateResume />} />
           <Route path="/edit-resume/:id" element={<EditResume />} />
-          <Route path="/helpSupport" element={<HelpSupport />} />
           <Route path="/my-resumes" element={<MyResumes />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
+        <Route path="/helpSupport" element={<HelpSupport />} />
 
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>

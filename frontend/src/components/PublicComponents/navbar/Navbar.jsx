@@ -5,22 +5,9 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const token = localStorage.getItem("token");
-  // Check if screen is mobile size
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth > 768) {
-        setIsMenuOpen(false);
-      }
-    };
 
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
-
+  // Close menu when clicking outside or pressing Escape
   useEffect(() => {
     if (isMenuOpen) {
       document.body.classList.add("menu-open");
@@ -67,17 +54,16 @@ const Navbar = () => {
       </div>
 
       {/* Hamburger Menu Button */}
-      {isMobile && (
-        <button
-          className={`hamburger ${isMenuOpen ? "active" : ""}`}
-          onClick={toggleMenu}
-          aria-label="Toggle navigation menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      )}
+      <button
+        className={`hamburger ${isMenuOpen ? "active" : ""}`}
+        onClick={toggleMenu}
+        aria-label="Toggle navigation menu"
+        aria-expanded={isMenuOpen}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
       {/* Navigation Items */}
       <ul className={`navItems ${isMenuOpen ? "open" : ""}`}>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Footer from "../../../components/PublicComponents/footer/Footer";
 import toast from "react-hot-toast";
+import { buildApiUrl, API_ENDPOINTS } from "../../../config/api";
 import "./Contact.css";
 import { Link } from "react-router-dom";
 
@@ -11,6 +12,7 @@ const Contact = () => {
     subject: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,19 +22,51 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    // You can add form submission logic here
-    toast.success("Thank you for your message! We'll get back to you soon.");
-    // Reset form
-    setFormData({
-      fullName: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
+    
+    // Validation
+    if (!formData.fullName || !formData.email || !formData.message) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(buildApiUrl(API_ENDPOINTS.CONTACT), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          subject: formData.subject || "General Inquiry",
+          message: formData.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status) {
+        toast.success("Thank you for your message! We'll get back to you soon.");
+        // Reset form
+        setFormData({
+          fullName: "",
+          email: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        toast.error(data.message || "Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Contact form error:", error);
+      toast.error("An error occurred. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactMethods = [
@@ -243,8 +277,8 @@ const Contact = () => {
                 ></textarea>
               </div>
 
-              <button type="submit" className="contact-page-submit-btn">
-                Send Message
+              <button type="submit" className="contact-page-submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? "Sending..." : "Send Message"}
                 <span className="contact-page-btn-arrow">→</span>
               </button>
             </form>
