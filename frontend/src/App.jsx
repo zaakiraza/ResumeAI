@@ -29,6 +29,7 @@ import MyResumes from "./pages/ProtectedPages/MyResumes/MyResumes";
 import Notifications from "./pages/ProtectedPages/notifications/Notifications";
 import Profile from "./pages/ProtectedPages/Profile/Profile";
 import Settings from "./pages/ProtectedPages/Settings/Settings";
+import ViewResumePDF from "./pages/ProtectedPages/ViewResumePDF/ViewResumePDF";
 import AuthSuccess from "./pages/AuthSuccess";
 
 import { Route, Routes, useLocation } from "react-router-dom";
@@ -53,6 +54,7 @@ function App() {
     "/create-resume",
     "/edit-resume",
     "/my-resumes",
+    "/view-resume",
     "/notifications",
     "/profile",
     "/settings",
@@ -120,6 +122,7 @@ function App() {
           <Route path="/create-resume" element={<CreateResume />} />
           <Route path="/edit-resume/:id" element={<EditResume />} />
           <Route path="/my-resumes" element={<MyResumes />} />
+          <Route path="/view-resume/:id" element={<ViewResumePDF />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />

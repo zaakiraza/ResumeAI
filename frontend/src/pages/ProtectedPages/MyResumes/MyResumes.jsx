@@ -410,7 +410,7 @@ const MyResumes = () => {
                       </button>
                       <button
                         onClick={() =>
-                          navigate(`/preview-resume/${resume._id}`)
+                          navigate(`/view-resume/${resume._id}`)
                         }
                       >
                         <FontAwesomeIcon icon={faEye} />
@@ -462,6 +462,13 @@ const MyResumes = () => {
                   </span>
                 </div>
                 <div className="resume-quick-actions">
+                  <button
+                    className="quick-action-button view-button"
+                    onClick={() => navigate(`/view-resume/${resume._id}`)}
+                    title="View Resume"
+                  >
+                    <FontAwesomeIcon icon={faEye} />
+                  </button>
                   <button
                     className="quick-action-button"
                     onClick={() => navigate(`/edit-resume/${resume._id}`)}
