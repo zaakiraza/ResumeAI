@@ -19,6 +19,7 @@ import {
   faArrowRight,
   faRocket,
   faStar,
+  faBrain,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../../hooks/useUser";
 import { useResumes } from "../../../hooks/useResume";
@@ -326,6 +327,20 @@ function Dashboard() {
                 </div>
                 <h3>Translate Resume</h3>
                 <p>AI tool that translates resumes into other languages</p>
+              </div>
+              
+              <div 
+                className="ai-tool-card clickable" 
+                onClick={() => navigate('/interview-prep')}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="tool-icon interview-icon" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+                  <FontAwesomeIcon icon={faBrain} />
+                </div>
+                <h3>Interview Preparation</h3>
+                <p>
+                  Generate personalized interview questions and practice with AI feedback
+                </p>
               </div>
             </div>
 

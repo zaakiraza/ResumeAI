@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useResume, useTemplates } from "../../../hooks/useResume";
 import { useSkills } from "../../../hooks/useSkills";
+import useProofreader from "../../../hooks/useProofreader";
+import useRewriter from "../../../hooks/useRewriter";
+import useSummarizer from "../../../hooks/useSummarizer";
 import toast from "react-hot-toast";
 import {
   FaUser,
@@ -25,12 +28,17 @@ import {
   FaChevronRight,
   FaStepForward,
   FaMinus,
+  FaSpellCheck,
+  FaMagic,
+  FaCompressAlt,
 } from "react-icons/fa";
 import Footer from "../../../components/PublicComponents/footer/Footer";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
+import ChromeAIStatus from "../../../components/ChromeAIStatus";
 import { buildApiUrl, API_ENDPOINTS } from "../../../config/api";
 import axios from "axios";
 import "./CreateResume.css";
+import "./AIFeatures.css";
 
 const CreateResume = () => {
   const navigate = useNavigate();
@@ -71,6 +79,11 @@ const CreateResume = () => {
     fetchPopularSkills,
     debouncedSearch,
   } = useSkills();
+  
+  // AI Feature Hooks
+  const { proofread, corrections, isProofreading, applyAllCorrections } = useProofreader();
+  const { makeProfessional, improveClarity, shorten, isRewriting } = useRewriter();
+  const { summarizeWorkExperience, isSummarizing } = useSummarizer();
   const [currentStep, setCurrentStep] = useState(1);
   const [resumeTitle, setResumeTitle] = useState("My Resume");
   const [stepStatus, setStepStatus] = useState({
@@ -103,6 +116,9 @@ const CreateResume = () => {
 
     // Career Summary
     careerObjective: "",
+    
+    // AI Writer state
+    generatingCareerSummary: false,
 
     // Work Experience
     workExperience: [
@@ -422,6 +438,125 @@ const CreateResume = () => {
     }
   };
 
+  // AI Career Summary Generator
+  const generateCareerSummary = async () => {
+    // Check if Writer API is available
+    if (!('Writer' in self)) {
+      toast.error('Writer API is not available. Please use Chrome Canary with the Writer API flag enabled.');
+      return;
+    }
+
+    // Check if we have enough information to generate
+    const hasWorkExp = formData.workExperience.some(exp => exp.jobTitle || exp.companyName);
+    const hasSkills = formData.skills.length > 0;
+    const hasEducation = formData.education.some(edu => edu.degree || edu.institution);
+
+    if (!hasWorkExp && !hasSkills && !hasEducation) {
+      toast.error('Please fill in at least some work experience, skills, or education first.');
+      return;
+    }
+
+    setFormData(prev => ({ ...prev, generatingCareerSummary: true }));
+
+    try {
+      // Check availability
+      const availability = await Writer.availability();
+      
+      if (availability !== 'readily' && availability !== 'available') {
+        toast.error(`Writer API is not ready. Status: ${availability}`);
+        setFormData(prev => ({ ...prev, generatingCareerSummary: false }));
+        return;
+      }
+
+      // Build context from existing form data
+      let context = '';
+      
+      // Add work experience
+      if (hasWorkExp) {
+        context += 'Work Experience:\n';
+        formData.workExperience
+          .filter(exp => exp.jobTitle || exp.companyName)
+          .forEach(exp => {
+            if (exp.jobTitle) context += `- ${exp.jobTitle}`;
+            if (exp.companyName) context += ` at ${exp.companyName}`;
+            if (exp.responsibilities) context += `: ${exp.responsibilities}`;
+            context += '\n';
+          });
+        context += '\n';
+      }
+
+      // Add skills
+      if (hasSkills) {
+        context += `Skills: ${formData.skills.join(', ')}\n\n`;
+      }
+
+      // Add education
+      if (hasEducation) {
+        context += 'Education:\n';
+        formData.education
+          .filter(edu => edu.degree || edu.institution)
+          .forEach(edu => {
+            if (edu.degree) context += `- ${edu.degree}`;
+            if (edu.institution) context += ` from ${edu.institution}`;
+            if (edu.graduationYear) context += ` (${edu.graduationYear})`;
+            context += '\n';
+          });
+        context += '\n';
+      }
+
+      // Add certifications
+      const hasCerts = formData.certifications.some(cert => cert.name);
+      if (hasCerts) {
+        context += 'Certifications: ';
+        context += formData.certifications
+          .filter(cert => cert.name)
+          .map(cert => cert.name)
+          .join(', ');
+        context += '\n\n';
+      }
+
+      // Add additional info
+      if (formData.volunteerExperience) {
+        context += `Volunteer Experience: ${formData.volunteerExperience}\n\n`;
+      }
+      if (formData.projects) {
+        context += `Projects: ${formData.projects}\n\n`;
+      }
+
+      console.log('Generating career summary with context:', context);
+
+      // Create writer with options
+      const writer = await Writer.create({
+        tone: 'formal',
+        format: 'plain-text',
+        length: 'short',
+        sharedContext: context,
+        expectedInputLanguages: ['en'],
+        expectedContextLanguages: ['en'],
+        outputLanguage: 'en',
+      });
+
+      // Generate the summary
+      const prompt = 'Write a professional career summary/objective for a resume based on the provided experience, skills, and education. Keep it concise (2-3 sentences) and impactful.';
+      const result = await writer.write(prompt);
+
+      // Clean up
+      writer.destroy();
+
+      console.log('Generated career summary:', result);
+
+      // Update form data
+      handleInputChange('careerObjective', result);
+      toast.success('Career summary generated successfully!');
+
+    } catch (error) {
+      console.error('Error generating career summary:', error);
+      toast.error('Failed to generate career summary: ' + error.message);
+    } finally {
+      setFormData(prev => ({ ...prev, generatingCareerSummary: false }));
+    }
+  };
+
   const convertFormDataToResumeFormat = () => {
     return {
       personalInfo: {
@@ -708,7 +843,127 @@ const CreateResume = () => {
             </div>
 
             <div className="create-resume-form-group">
-              <label htmlFor="careerObjective">Career Objective *</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <label htmlFor="careerObjective">Career Objective *</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    className="ai-action-btn"
+                    onClick={async () => {
+                      if (!formData.careerObjective.trim()) {
+                        toast.error('Please write some text first');
+                        return;
+                      }
+                      
+                      const loadingToast = toast.loading('Checking grammar and spelling...');
+                      
+                      try {
+                        const result = await proofread(formData.careerObjective);
+                        toast.dismiss(loadingToast);
+                        
+                        if (result && result.corrections && result.corrections.length > 0) {
+                          handleInputChange('careerObjective', result.corrected);
+                          toast.success(`✅ Fixed ${result.corrections.length} error(s)!`);
+                        } else {
+                          toast.success('✅ No errors found! Your text looks great.');
+                        }
+                      } catch (error) {
+                        toast.dismiss(loadingToast);
+                        console.error('Proofread error:', error);
+                        toast.error('Failed to proofread. Please check console for details.');
+                      }
+                    }}
+                    disabled={isProofreading || !formData.careerObjective.trim()}
+                    title="Check grammar and spelling"
+                    style={{
+                      padding: '8px 12px',
+                      backgroundColor: isProofreading ? '#6c757d' : '#28a745',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: isProofreading || !formData.careerObjective.trim() ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <FaSpellCheck />
+                    {isProofreading ? 'Checking...' : 'Proofread'}
+                  </button>
+                  
+                  <button
+                    type="button"
+                    className="ai-action-btn"
+                    onClick={async () => {
+                      if (!formData.careerObjective.trim()) {
+                        toast.error('Please write some text first');
+                        return;
+                      }
+                      try {
+                        const result = await makeProfessional(formData.careerObjective);
+                        handleInputChange('careerObjective', result);
+                        toast.success('Text refined!');
+                      } catch (error) {
+                        console.error('Rewrite error:', error);
+                      }
+                    }}
+                    disabled={isRewriting || !formData.careerObjective.trim()}
+                    title="Make text more professional"
+                    style={{
+                      padding: '8px 12px',
+                      backgroundColor: isRewriting ? '#6c757d' : '#17a2b8',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: isRewriting || !formData.careerObjective.trim() ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <FaMagic />
+                    {isRewriting ? 'Refining...' : 'Refine'}
+                  </button>
+                  
+                  <button
+                    type="button"
+                    className="ai-generate-btn"
+                    onClick={generateCareerSummary}
+                    disabled={formData.generatingCareerSummary}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 16px',
+                      backgroundColor: formData.generatingCareerSummary ? '#6c757d' : '#4285f4',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: formData.generatingCareerSummary ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      if (!formData.generatingCareerSummary) {
+                        e.currentTarget.style.backgroundColor = '#3367d6';
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      if (!formData.generatingCareerSummary) {
+                        e.currentTarget.style.backgroundColor = '#4285f4';
+                      }
+                    }}
+                  >
+                    <FaBrain />
+                    {formData.generatingCareerSummary ? 'Generating...' : 'Generate with AI'}
+                  </button>
+                </div>
+              </div>
               <textarea
                 id="careerObjective"
                 value={formData.careerObjective}
@@ -718,13 +973,14 @@ const CreateResume = () => {
                 placeholder="Experienced software developer with 5+ years of expertise in full-stack development. Passionate about creating efficient, scalable solutions and leading development teams to deliver high-quality products."
                 rows="6"
                 className={errors.careerObjective ? "error" : ""}
+                disabled={formData.generatingCareerSummary}
               />
               {errors.careerObjective && (
                 <span className="error-message">{errors.careerObjective}</span>
               )}
               <p className="create-resume-help-text">
-                AI Tip: Keep it concise (2-3 sentences) and highlight your key
-                strengths
+                <FaBrain style={{ marginRight: '5px' }} />
+                AI Tip: Click "Generate with AI" to automatically create a summary based on your work experience, skills, and education. Use "Proofread" to check grammar and "Refine" to make it more professional.
               </p>
             </div>
           </div>
@@ -865,7 +1121,112 @@ const CreateResume = () => {
                 </div>
 
                 <div className="create-resume-form-group">
-                  <label>Key Responsibilities</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label>Key Responsibilities</label>
+                    {exp.responsibilities && exp.responsibilities.trim().length > 0 && (
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const loadingToast = toast.loading('Checking grammar and spelling...');
+                            
+                            try {
+                              const result = await proofread(exp.responsibilities);
+                              toast.dismiss(loadingToast);
+                              
+                              if (result && result.corrections && result.corrections.length > 0) {
+                                handleArrayInputChange("workExperience", index, "responsibilities", result.corrected);
+                                toast.success(`✅ Fixed ${result.corrections.length} error(s)!`);
+                              } else {
+                                toast.success('✅ No errors found! Your text looks great.');
+                              }
+                            } catch (error) {
+                              toast.dismiss(loadingToast);
+                              console.error('Proofread error:', error);
+                              toast.error('Failed to proofread. Please check console for details.');
+                            }
+                          }}
+                          disabled={isProofreading}
+                          title="Check grammar and spelling"
+                          style={{
+                            padding: '6px 10px',
+                            backgroundColor: isProofreading ? '#6c757d' : '#28a745',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: isProofreading ? 'not-allowed' : 'pointer',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <FaSpellCheck style={{ fontSize: '10px' }} />
+                          {isProofreading ? 'Checking...' : 'Proofread'}
+                        </button>
+                        
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              const result = await makeProfessional(exp.responsibilities);
+                              handleArrayInputChange("workExperience", index, "responsibilities", result);
+                              toast.success('Text refined!');
+                            } catch (error) {
+                              console.error('Rewrite error:', error);
+                            }
+                          }}
+                          disabled={isRewriting}
+                          title="Make text more professional"
+                          style={{
+                            padding: '6px 10px',
+                            backgroundColor: isRewriting ? '#6c757d' : '#17a2b8',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: isRewriting ? 'not-allowed' : 'pointer',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <FaMagic style={{ fontSize: '10px' }} />
+                          {isRewriting ? 'Refining...' : 'Refine'}
+                        </button>
+                        
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              const result = await summarizeWorkExperience(exp.responsibilities, 'key-points');
+                              handleArrayInputChange("workExperience", index, "responsibilities", result);
+                              toast.success('Converted to bullet points!');
+                            } catch (error) {
+                              console.error('Summarize error:', error);
+                            }
+                          }}
+                          disabled={isSummarizing}
+                          title="Summarize as bullet points"
+                          style={{
+                            padding: '6px 10px',
+                            backgroundColor: isSummarizing ? '#6c757d' : '#ffc107',
+                            color: '#000',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: isSummarizing ? 'not-allowed' : 'pointer',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <FaCompressAlt style={{ fontSize: '10px' }} />
+                          {isSummarizing ? 'Summarizing...' : 'Summarize'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <textarea
                     value={exp.responsibilities}
                     onChange={(e) =>
@@ -880,7 +1241,7 @@ const CreateResume = () => {
                     rows="4"
                   />
                   <p className="create-resume-help-text">
-                    Use bullet points and start with action verbs
+                    Use bullet points and start with action verbs. AI can help you proofread, refine, or summarize your text.
                   </p>
                 </div>
 
@@ -1992,6 +2353,7 @@ const CreateResume = () => {
 
   return (
     <>
+      <ChromeAIStatus />
       <div className="create-resume-page">
         {/* Hero Section */}
         <section className="create-resume-hero">

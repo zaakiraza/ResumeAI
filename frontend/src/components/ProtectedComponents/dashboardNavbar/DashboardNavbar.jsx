@@ -245,6 +245,19 @@ const DashboardNavbar = () => {
               <span className="nav-text">AI Tools</span>
             </button>
           </li>
+          <li role="none">
+            <button
+              className={`dashboard-nav-link ${
+                isActiveRoute("/ai-writer") ? "active" : ""
+              }`}
+              onClick={() => handleNavigation("/ai-writer")}
+              role="menuitem"
+              aria-current={isActiveRoute("/ai-writer") ? "page" : undefined}
+            >
+              <FontAwesomeIcon icon={faRobot} className="nav-icon" />
+              <span className="nav-text">AI Writer</span>
+            </button>
+          </li>
         </ul>
 
         {/* Mobile Menu Toggle - Only visible on mobile */}
@@ -310,6 +323,19 @@ const DashboardNavbar = () => {
               >
                 <FontAwesomeIcon icon={faRobot} className="nav-icon" />
                 <span className="nav-text">AI Tools</span>
+              </button>
+            </li>
+            <li role="none">
+              <button
+                className={`sidebar-nav-link ${
+                  isActiveRoute("/ai-writer") ? "active" : ""
+                }`}
+                onClick={() => handleNavigation("/ai-writer")}
+                role="menuitem"
+                aria-current={isActiveRoute("/ai-writer") ? "page" : undefined}
+              >
+                <FontAwesomeIcon icon={faRobot} className="nav-icon" />
+                <span className="nav-text">AI Writer</span>
               </button>
             </li>
           </ul>

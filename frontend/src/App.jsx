@@ -20,6 +20,8 @@ import Signup from "./pages/PublicPages/register/signup";
 import Dashboard from "./pages/ProtectedPages/dashboard/Dashboard";
 import ResetPassword from "./pages/ProtectedPages/ResetPassword/esetPassword";
 import AITools from "./pages/ProtectedPages/AITools/AITools";
+import AIWriter from "./pages/ProtectedPages/AIWriter/AIWriter";
+import InterviewPrep from "./pages/ProtectedPages/InterviewPrep/InterviewPrep";
 import CreateResume from "./pages/ProtectedPages/CreateResume/CreateResume";
 import EditResume from "./pages/ProtectedPages/EditResume/EditResume";
 import HelpSupport from "./pages/ProtectedPages/HelpSupport/HelpSupport";
@@ -46,6 +48,8 @@ function App() {
   const dashboardNavbarAllowed = [
     "/dashboard",
     "/ai-tools",
+    "/ai-writer",
+    "/interview-prep",
     "/create-resume",
     "/edit-resume",
     "/my-resumes",
@@ -111,6 +115,8 @@ function App() {
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/ai-tools" element={<AITools />} />
+          <Route path="/ai-writer" element={<AIWriter />} />
+          <Route path="/interview-prep" element={<InterviewPrep />} />
           <Route path="/create-resume" element={<CreateResume />} />
           <Route path="/edit-resume/:id" element={<EditResume />} />
           <Route path="/my-resumes" element={<MyResumes />} />
